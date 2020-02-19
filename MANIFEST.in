@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include electrical_contracting *.css
+recursive-include electrical_contracting *.csv
+recursive-include electrical_contracting *.html
+recursive-include electrical_contracting *.ico
+recursive-include electrical_contracting *.js
+recursive-include electrical_contracting *.json
+recursive-include electrical_contracting *.md
+recursive-include electrical_contracting *.png
+recursive-include electrical_contracting *.py
+recursive-include electrical_contracting *.svg
+recursive-include electrical_contracting *.txt
+recursive-exclude electrical_contracting *.pyc
