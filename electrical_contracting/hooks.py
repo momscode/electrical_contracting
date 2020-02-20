@@ -119,4 +119,4 @@ app_license = "MIT"
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "electrical_contracting.event.get_events"
 # }
-fixtures = ["Custom Field"]
+fixtures = ["Custom Field","Custom Script"]
