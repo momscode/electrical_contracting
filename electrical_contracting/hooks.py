@@ -28,7 +28,7 @@ app_license = "MIT"
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 doctype_js = {
-    "Activity Cost" : "fixtures/custom_scripts/Activity Cost.js"
+    "Activity Cost" : "fixtures/custom_scripts/activity_cost.js"
     }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -122,4 +122,4 @@ doctype_js = {
 # override_whitelisted_methods = {
 # 	"frappe.desk.doctype.event.event.get_events": "electrical_contracting.event.get_events"
 # }
-fixtures = ["Custom Field","Custom Script"]
+fixtures = ["Custom Field"]
