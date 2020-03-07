@@ -28,7 +28,7 @@ app_license = "MIT"
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 doctype_js = {
-    "Activity Cost" : "fixtures/custom_scripts/activity_cost.js"
+    "Activity Cost" : "public/js/activity_cost.js"
     }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
