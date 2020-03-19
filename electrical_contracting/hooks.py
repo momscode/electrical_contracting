@@ -28,7 +28,8 @@ app_license = "MIT"
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
 doctype_js = {
-    "Activity Cost" : "public/js/activity_cost.js"
+    "Activity Cost" : "public/js/activity_cost.js",
+    "BOM" : "public/js/bom.js"
     }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -82,13 +83,17 @@ doctype_js = {
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
+doc_events = {
 # 	"*": {
 # 		"on_update": "method",
 # 		"on_cancel": "method",
 # 		"on_trash": "method"
 #	}
-# }
+    "BOM": {
+        "after_insert": "electrical_contracting.electrical_contracting.doctype.project_discount.project_discount.on_bom_on_save",
+        "on_change": "electrical_contracting.electrical_contracting.doctype.project_discount.project_discount.on_bom_on_change"
+    }
+ }
 
 # Scheduled Tasks
 # ---------------
