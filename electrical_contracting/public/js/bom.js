@@ -1,33 +1,72 @@
 frappe.ui.form.on('BOM', {
-    validate: function(frm) {
-		var total_discount_rate = 0;
-		$.each(frm.doc.bom_discount_detial || [], function(i, d) {
-            $.each(frm.doc.items || [], function(i, v) {
-                frappe.call({
-                    method: 'frappe.client.get_value',
-                    args: {
-                        'doctype': 'Item',
-                        'filters': {'name': v.item_code},
-                        'fieldname': [
-                            'item_group'
-                        ]
+    before_submit: function(frm){
+        if(!frm.doc.project_discount && frm.doc.docstatus == '0'){
+            //set product discount name 
+            frappe.call({
+                method: 'frappe.client.get_value',
+                args: {
+                    'doctype': 'Project Discount',
+                    'filters': {
+                        'project': frm.doc.project,
+                        'is_active': 1
                     },
-                    callback: function(s) {
-                        if (!s.exc) {
-                            if(d.item_group == s.message.item_group){
-                                var discount_rate = 0;
-                                discount_rate = flt(v.amount)*(flt(d.discount_percentage)/100)
-                                total_discount_rate += flt(discount_rate);
-                                frm.set_value("total_discount",total_discount_rate);
-                                frappe.model.set_value(v.doctype, v.name,"discount_percentage",d.discount_percentage)
-                                frappe.model.set_value(v.doctype, v.name,"discount_rate",discount_rate)
-                            }
-                     }
-                 }
-                })
+                    'fieldname': [
+                        'name'
+                    ]                   
+                },
+                callback: function(n){
+                    if(!n.exc){
+                        frm.set_value("project_discount",n.message.name);
+                    }
+                }
+            })
+            }
+    },
+    validate: function(frm) {
+        var total_discount_rate = 0;
+        if(frm.doc.project != '')
+        {
+            $.each(frm.doc.bom_discount_detial || [], function(i, d) {
+                $.each(frm.doc.items || [], function(i, v) {
+                    frappe.call({
+                        method: 'frappe.client.get_value',
+                        args: {
+                            'doctype': 'Item',
+                            'filters': {'name': v.item_code},
+                            'fieldname': [
+                                'item_group'
+                            ]
+                        },
+                        callback: function(s) {
+                            if (!s.exc) {
+                                if(d.item_group == s.message.item_group){
+                                    var discount_rate = 0;
+                                    discount_rate = flt(v.amount)*(flt(d.discount_percentage)/100)
+                                    total_discount_rate += flt(discount_rate);
+                                    frm.set_value("total_discount",total_discount_rate);
+                                    frappe.model.set_value(v.doctype, v.name,"discount_percentage",d.discount_percentage)
+                                    frappe.model.set_value(v.doctype, v.name,"discount_rate",discount_rate)
+                                }
+                        }
+                    }
+                    })
+                });
             });
-        });  
-	}
+        }
+        else
+        {
+            if(frm.doc.type == 'Project')
+            {
+                msgprint('Please Select the Project');
+                validated = false;
+            }           
+        }
+    },
+    project: function(frm){
+        $.each(frm.doc.bom_discount_detial || [], function(i, d) {
+            frappe.model.set_value(d.doctype, d.name,"project",frm.doc.project)
+        });
+    }
 })
 frappe.ui.form.on('BOM Item', {
     item_code: function(frm, cdt, cdn){
@@ -94,43 +133,4 @@ frappe.ui.form.on('BOM Item', {
              }
         })       
     }
- /*   discount_percentage: function(frm, cdt, cdn){
-        var d = locals[cdt][cdn];
-        msgprint('hello');
-        msgprint('amount is '+ d.amount);
-        frappe.model.set_value(d.doctype, d.name,"discount_rate",d.amount*(d.discount_percentage/100))
-    }
-*/
 });
-/*
-frappe.ui.form.on('Project Discount Detail', {
-    discount_percentage: function(frm, cdt, cdn){
-        var d = locals[cdt][cdn];
-        $.each(frm.doc.items || [], function(i, v) {
-            frappe.call({
-                method: 'frappe.client.get_value',
-                args: {
-                        'doctype': 'Item',
-                        'filters': {'name': v.item_code},
-                        'fieldname': [
-                             'item_group'
-                         ]
-                },
-                callback: function(s) {
-                    if (!s.exc) {
-                        var item_group = s.message.item_group;
-                        if(d.item_group == item_group)
-                        {
-                            msgprint('Amount equal to '+v.amount);
-                            frappe.model.set_value(v.doctype, v.name,"discount_percentage",d.discount_percentage)
-                            frappe.model.set_value(v.doctype, v.name,"discount_rate",v.amount*(v.discount_percentage/100))
-                        }
-                    }
-                }
-            })
-
-        });
-    }
-
-});
-*/

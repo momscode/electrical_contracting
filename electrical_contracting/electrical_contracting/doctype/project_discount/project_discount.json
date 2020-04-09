@@ -7,8 +7,13 @@
  "field_order": [
   "naming_series",
   "project",
+  "column_break_3",
+  "is_active",
+  "disabled",
   "section_break_4",
-  "discount_detail"
+  "discount_detail",
+  "section_break_8",
+  "update_bom"
  ],
  "fields": [
   {
@@ -33,9 +38,37 @@
    "fieldtype": "Link",
    "label": "Project",
    "options": "Project"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Active"
+  },
+  {
+   "default": "0",
+   "fieldname": "disabled",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Disabled"
+  },
+  {
+   "fieldname": "section_break_8",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "update_bom",
+   "fieldtype": "Button",
+   "hidden": 1,
+   "label": "Update All BOM"
   }
  ],
- "modified": "2020-03-13 13:49:26.502402",
+ "modified": "2020-04-09 00:14:02.804651",
  "modified_by": "Administrator",
  "module": "Electrical Contracting",
  "name": "Project Discount",
