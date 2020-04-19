@@ -95,6 +95,13 @@ doc_events = {
     },
     "Project Discount": {
         "before_insert":"electrical_contracting.electrical_contracting.doctype.project_discount.project_discount.before_insert"
+    },
+    "Project":{
+        "after_insert":"electrical_contracting.electrical_contracting.doctype.project.project_custom.on_project_on_submit",
+        "autoname":"electrical_contracting.electrical_contracting.doctype.project.project_custom.autoname"
+    },
+    "Sales Order":{
+        "on_submit":"electrical_contracting.electrical_contracting.doctype.sales_order.sales_order_custom.on_sales_order_after_submit"
     }
  }
 
