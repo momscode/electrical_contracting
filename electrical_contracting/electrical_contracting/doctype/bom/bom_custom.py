@@ -18,7 +18,7 @@ def get_generic_details(g_bom):
     from `tabBOM Item` bi, `tabBOM` b, `tabItem` i
     where b.name = bi.parent and bi.parenttype = 'BOM'
     and bi.item_code = i.item_code and i.disabled = 0
-    and bi.docstatus = 1 and bi.parent = %s""",(g_bom),as_dict=1)
+    and bi.docstatus = 1 and bi.parent = %s order by bi.idx asc""",(g_bom),as_dict=1)
 
     return bom_item_list
 
