@@ -14,8 +14,6 @@ frappe.ui.form.on('Quotation Item', {
                 fieldname:["name","stock_material_cost","activity_material_cost"]
             }, 
             callback: function(r) { 
-                //alert(r.message.stock_material_cost)
-        
                 // set the returned value in a field
                 frappe.model.set_value(d.doctype, d.name,"bom_no",r.message.name)
                 frappe.model.set_value(d.doctype, d.name,"stock_material_cost",r.message.stock_material_cost)
@@ -26,12 +24,8 @@ frappe.ui.form.on('Quotation Item', {
      margin: function(frm,cdt,cdn) {
         var d = locals[cdt][cdn];
         var rate = 0;
-       
-        
         rate = flt(d.stock_material_cost)*(flt(d.margin)/100);
-       
         frappe.model.set_value(d.doctype, d.name,"margin_rate_of_stock_items",rate)
-		//frm.set_value("margin_rate_of_stock_items",rate)
     },
     margin_rate_of_stock_items: function(frm,cdt,cdn) {
         var d = locals[cdt][cdn];
@@ -42,7 +36,7 @@ frappe.ui.form.on('Quotation Item', {
         frappe.model.set_value(d.doctype, d.name,"margin",rate)
          total_rate =d.stock_material_cost + d.margin_rate_of_stock_items;
         frappe.model.set_value(d.doctype, d.name,"rate_with_margin_of_stock_items",total_rate)
-        total_rate1 = d.rate_with_margin_of_stock_items +d.rate_with_margin_of_activity_items;
+        total_rate1 = d.margin_rate_of_stock_items +d.margin_rate_of_activity_items;
         frappe.model.set_value(d.doctype, d.name,"margin_rate_or_amount",total_rate1)
         
     },
@@ -50,12 +44,9 @@ frappe.ui.form.on('Quotation Item', {
         var d = locals[cdt][cdn];
         var rate = 0;
         var total_rate = 0;
-        
         rate = flt(d.activity_material_cost)*(flt(d.margin_of_activity_items)/100);
-       
         frappe.model.set_value(d.doctype, d.name,"margin_rate_of_activity_items",rate)
        
-		//frm.set_value("margin_rate_of_stock_items",rate)
     },
     margin_rate_of_activity_items: function(frm,cdt,cdn) {
         var d = locals[cdt][cdn];
@@ -66,7 +57,7 @@ frappe.ui.form.on('Quotation Item', {
         frappe.model.set_value(d.doctype, d.name,"margin_of_activity_items",rate)
          total_rate =d.activity_material_cost + d.margin_rate_of_activity_items;
         frappe.model.set_value(d.doctype, d.name,"rate_with_margin_of_activity_items",total_rate)
-        total_rate1 = d.rate_with_margin_of_stock_items +d.rate_with_margin_of_activity_items;
+        total_rate1 = d.margin_rate_of_stock_items +d.margin_rate_of_activity_items;
         frappe.model.set_value(d.doctype, d.name,"margin_rate_or_amount",total_rate1)
     }
   /*   discount_on_stock_item: function(frm,cdt,cdn){
@@ -154,42 +145,40 @@ frappe.ui.form.on('Quotation Item', {
         disc_rate = rate +act_rate;
         frappe.model.set_value(d.doctype, d.name,"discount_rate",disc_rate)
         frappe.model.set_value(d.doctype, d.name,"discount_amount",disc_rate)
-     },
+     },*/
      
 });
 frappe.ui.form.on("Quotation", {
     default_stock_item_discount: function(frm) {
-        if(frm.doc.items.length >1) 
-         {
+        //if(frm.doc.items.length >1) 
+         //{
+             msgprint('default_stock_item_discount');
             $.each(frm.doc.items || [], function(i, v)
             {
-               frappe.model.set_value(v.doctype, v.name,"discount_on_stock_item",frm.doc.default_stock_item_discount)
+               frappe.model.set_value(v.doctype, v.name,"margin",frm.doc.default_stock_item_discount)
                
            }) 
-           
-            
-         }
-         else
-         {
-            msgprint({message: 'Please select Item from Table', title: __('Message'), indicator:'blue'})
-            frm.refresh_field(frm.doc.default_stock_item_discount);
-    
-    }
+         //}
+        // else
+        // {
+           // msgprint({message: 'Please select Item from Table', title: __('Message'), indicator:'blue'})
+           // frm.refresh_field("default_stock_item_discount");
+         //}
  },
  default_activity_item_discount: function(frm) {
-    if(frm.doc.items.length >1) 
-    {
+    msgprint('default_activity_item_discount');
     $.each(frm.doc.items || [], function(i, v) {
-        frappe.model.set_value(v.doctype, v.name,"discount_on_activity_items",frm.doc.default_activity_item_discount)
+        frappe.model.set_value(v.doctype, v.name,"margin_of_activity_items",frm.doc.default_activity_item_discount)
     })
-}
-else
-{
+    /*if(frm.doc.items.length >1) 
+    {
+        
+    
+    }
+    else
+    {
    msgprint({message: 'Please select Item from Table', title: __('Message'), indicator:'blue'})
-   
-
+   frm.refresh_field("default_activity_item_discount");
+    }*/
 }
-},*/
-
-
 });
