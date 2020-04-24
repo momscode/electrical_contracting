@@ -335,7 +335,7 @@ frappe.ui.form.on('BOM', {
 })
 frappe.ui.form.on('BOM Item', {
     activity_type: function(frm, cdt, cdn){
-       // if(frm.doc.type == 'Project'){
+        if(frm.doc.type != 'Project'){
             var d = locals[cdt][cdn];
             var flag = false;
             var item = d.activity_type;      
@@ -349,7 +349,7 @@ frappe.ui.form.on('BOM Item', {
                 frappe.model.set_value(bom_item.doctype, bom_item.name, "item_code", item);
                 cur_frm.refresh_field("items");
             }  
-        //}   
+        }   
     },  
     item_code: function(frm, cdt, cdn){
         if(frm.doc.type == 'Project'){
