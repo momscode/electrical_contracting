@@ -3,7 +3,7 @@ frappe.ui.form.on('BOM', {
         frm.set_query("g_item", function() {
 			return {
 				filters: [
-					["Item","item_group", "=", "Generic Sellable Items"]
+                //["Item","item_group", "=", "Generic Sellable Items"]
 				]
 			}
         });
@@ -13,7 +13,8 @@ frappe.ui.form.on('BOM', {
             frm.set_query("item", function() {
                 return {
                     filters: [
-                        ["Item","item_group", "=", "Generic Sellable Items"]
+                     // ["Item","item_group", "=", "Generic Sellable Items"]
+                       //["Item","default_BOM", "!=","item_name"]
                     ]
                 }
             });
@@ -138,6 +139,8 @@ frappe.ui.form.on('BOM', {
             });
         }
     },
+    
+
     validate: function(frm) {
         var total_discount_rate = 0;
         var total_cost_with_discount = 0;
@@ -310,8 +313,10 @@ frappe.ui.form.on('BOM', {
                 },
                 callback:function(r){
                     if (!r.exc) {
+                     for (var i=0; i<r.message.length; i++){
                         var a = r.message.name;
                         frm.set_value("g_bom",r.message.name);
+                        }
                     }
                 }
             });
@@ -331,7 +336,29 @@ frappe.ui.form.on('BOM', {
                 frappe.model.set_value(d.doctype, d.name,"project",frm.doc.project)
             });
         }
+    },
+    onload: function(frm){    
+        frappe.call({
+            method: 'electrical_contracting.electrical_contracting.doctype.bom.bom_custom.get_items',
+            'fieldname':['item_name'],
+            
+            callback:function(r){
+                if (!r.exc) {
+               // debugger;
+               alert(r.message.length)
+               for (var i=0; i<r.message.length; i++){
+                   debugger;
+                var a = r.message.item_name;
+                    alert(a);
+                frm.set_value("item",r.message.item_name);
+                }
+                
+            }
+        }
+        });
     }
+   
+    
 })
 frappe.ui.form.on('BOM Item', {
     activity_type: function(frm, cdt, cdn){

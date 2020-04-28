@@ -93,7 +93,8 @@ doc_events = {
 #	}
     "BOM": {
         "after_insert": "electrical_contracting.electrical_contracting.doctype.project_discount.project_discount.on_bom_on_save",
-        "on_change": "electrical_contracting.electrical_contracting.doctype.project_discount.project_discount.on_bom_on_change"
+        "on_change": "electrical_contracting.electrical_contracting.doctype.project_discount.project_discount.on_bom_on_change",
+        "on_submit":"electrical_contracting.electrical_contracting.doctype.bom.bom_custom.on_Bom_after_submit"
     },
     "Project Discount": {
         "before_insert":"electrical_contracting.electrical_contracting.doctype.project_discount.project_discount.before_insert"
@@ -105,6 +106,7 @@ doc_events = {
     "Sales Order":{
         "on_submit":"electrical_contracting.electrical_contracting.doctype.sales_order.sales_order_custom.on_sales_order_after_submit"
     }
+
  }
 
 # Scheduled Tasks
