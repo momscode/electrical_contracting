@@ -12,9 +12,11 @@ def get_sales_order_items(doctype, txt, searchfield, start, page_len, filters):
     si.item_code not in(select g_item from `tabBOM` where type = 'Project' and g_item = si.item_code and docstatus<2)
     and si.parent = (select name from `tabSales Order` where project = %s and docstatus = 1)""",(filters.get('project')))
 
+
 @frappe.whitelist()
 def get_generic_details(g_bom):
-    bom_item_list = frappe.db.sql("""select bi.item_code,i.item_group,bi.activity_type,bi.qty,bi.uom,bi.rate,bi.amount
+    bom_item_list = frappe.db.sql("""select bi.item_code,i.item_group,bi.activity_type,bi.qty,bi.uom,bi.rate,bi.amount,
+    bi.activity_uom,bi.activity_qty 
     from `tabBOM Item` bi, `tabBOM` b, `tabItem` i
     where b.name = bi.parent and bi.parenttype = 'BOM'
     and bi.item_code = i.item_code and i.disabled = 0
