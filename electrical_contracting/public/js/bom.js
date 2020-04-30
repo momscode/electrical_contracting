@@ -143,7 +143,7 @@ frappe.ui.form.on('BOM', {
             });
         });
         //check rate difference between generic and project specific bom
-        if(frm.dec.type == 'Project'){
+        if(frm.doc.type == 'Project'){
             if(frm.doc.specific_total_cost > frm.doc.generic_total_cost){
                 return new Promise(function(resolve, reject){
                     frappe.confirm(
