@@ -175,23 +175,16 @@ frappe.ui.form.on("Quotation", {
         frm.set_value("total_activity_with_margin",total_activity_with_margin);
     },
     default_stock_item_discount: function(frm) {
-        //if(frm.doc.items.length >1) 
-         //{
-             msgprint('default_stock_item_discount');
+    
             $.each(frm.doc.items || [], function(i, v)
             {
                frappe.model.set_value(v.doctype, v.name,"margin",frm.doc.default_stock_item_discount)
                
            }) 
-         //}
-        // else
-        // {
-           // msgprint({message: 'Please select Item from Table', title: __('Message'), indicator:'blue'})
-           // frm.refresh_field("default_stock_item_discount");
-         //}
+        
  },
  default_activity_item_discount: function(frm) {
-    msgprint('default_activity_item_discount');
+    
     $.each(frm.doc.items || [], function(i, v) {
         frappe.model.set_value(v.doctype, v.name,"margin_of_activity_items",frm.doc.default_activity_item_discount)
     })
