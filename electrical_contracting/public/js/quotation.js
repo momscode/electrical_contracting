@@ -149,6 +149,31 @@ frappe.ui.form.on('Quotation Item', {
      
 });
 frappe.ui.form.on("Quotation", {
+    validate:function(frm)
+    {
+       
+        var total_Material_cost= 0;
+        var total_activity_cost = 0;
+        var total_activity_margin_amount = 0;
+        var total_Material_margin_amount = 0;
+        var total_Material_with_margin = 0;
+        var total_activity_with_margin= 0;
+        var activity_cost = 0;
+        $.each(frm.doc.items || [], function(i, v) {
+            total_Material_cost = total_Material_cost + v.stock_material_cost
+            total_activity_cost = total_activity_cost + v.activity_material_cost 
+            total_Material_margin_amount = total_Material_margin_amount + v.margin_rate_of_stock_items 
+            total_activity_margin_amount = total_activity_margin_amount + v.margin_rate_of_activity_items
+            total_Material_with_margin = total_Material_with_margin + v.rate_with_margin_of_stock_items
+            total_activity_with_margin = total_activity_with_margin + v.rate_with_margin_of_activity_items
+        })
+        frm.set_value("total_material_cost",total_Material_cost);
+        frm.set_value("total_activity_cost",total_activity_cost);
+        frm.set_value("total_material_margin_amount",total_Material_margin_amount);
+        frm.set_value("total_activity_margin_amount",total_activity_margin_amount);
+        frm.set_value("total_material_with_margin",total_Material_with_margin);
+        frm.set_value("total_activity_with_margin",total_activity_with_margin);
+    },
     default_stock_item_discount: function(frm) {
         //if(frm.doc.items.length >1) 
          //{

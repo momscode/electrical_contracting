@@ -23,6 +23,38 @@ def get_generic_details(g_bom):
     and bi.docstatus = 1 and bi.parent = %s order by bi.idx asc""",(g_bom),as_dict=1)
 
     return bom_item_list
+def on_BOM_after_submit(doc, handler=""):
+    bom_item_list = frappe.db.sql("""select item_code from `tabItem Price` where item_code= %s """,(doc.item),as_dict=1)
+    if not bom_item_list:
+            project = frappe.new_doc('Item Price')
+            project.Item_code = doc.item
+            project.uom = doc.uom
+            project.price_list = 'Standard Selling'
+            project.price_list_rate = doc.total_cost
+            project.flags.ignore_permissions  = True
+            project.update({
+            'item_code': project.Item_code,
+            'uom': project.uom,
+            'price_list': project.price_list,
+            'price_list_rate': project.price_list_rate
+            }).insert()
+            frappe.msgprint(msg = 'Item Price Created',
+            title = 'Notification',
+            indicator = 'green')
+    else:
+
+            frappe.db.sql("""update `tabItem Price` set price_list_rate = %s where item_code =%s""",(doc.total_cost, doc.item))
+            frappe.msgprint(msg = 'Item Price Updated',
+            title = 'Notification',
+            indicator = 'green')
+   
+   
+    return
+        
+
+
+    
+    
 
 
 

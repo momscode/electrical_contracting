@@ -16,11 +16,20 @@ def on_sales_order_after_submit(doc, handler=""):
         'sales_order': project.sales_order,
         'estimated_costing': project.estimated_costing
     }).insert()
+    Project_name = frappe.db.sql("""select name  from `tabProject` where sales_order= %s """,(doc.name),as_dict=1)
+    for b in Project_name:
 
-    frappe.msgprint(msg = 'A Project has been created',
+        warehouse = frappe.new_doc('Warehouse')
+        warehouse.warehouse_name = b.name
+        warehouse.flags.ignore_permissions  = True
+        warehouse.update({
+        'warehouse_name': warehouse.warehouse_name
+        }).insert()
+
+
+    frappe.msgprint(msg = 'Project And Warehouse Created',
        title = 'Notification',
        indicator = 'green'
     )
-
     return
 
