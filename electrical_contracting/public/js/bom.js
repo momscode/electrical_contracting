@@ -428,6 +428,28 @@ frappe.ui.form.on('BOM Item', {
             } 
         }   
     },
+    before_items_remove:function(frm,cdt,cdn)
+    {  
+    var d = locals[cdt][cdn];
+    var qty=0
+        $.each(frm.doc.items || [], function(i, v) {
+            if(d.activity_type == v.item_code)
+            {
+               qty = v.qty - d.activity_qty
+               if(qty==0)
+               {
+                cur_frm.get_field("items").grid.grid_rows[i].remove();
+               }
+               else{
+                frappe.model.set_value(v.doctype, v.name, "qty", qty);
+               
+               }
+            }
+            
+            
+        });
+       
+    },
     amount: function(frm, cdt, cdn){
         //------statements-----
     },
