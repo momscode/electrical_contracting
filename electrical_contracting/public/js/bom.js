@@ -258,24 +258,6 @@ frappe.ui.form.on('BOM', {
             });
         });
     },
-    is_discount_applied: function(frm){
-        if(frm.doc.is_discount_applied == true){
-            //frm.doc.is_discount_applied = false;
-            frappe.msgprint({
-                title: __('Notification'),
-                message: __('Are you sure you want to proceed?'),
-                primary_action:{
-                    'label': 'Proceed',
-                    action() {
-                        //masgprint(values);
-                    }
-                }
-            });
-            //if(frm.doc.generic_total_cost > frm.doc.specific_total_cost ){
-
-            //}
-        }
-    },
     type: function(frm){
         if(frm.doc.type == 'General'){
            // if(frm.doc.project)
@@ -412,6 +394,24 @@ frappe.ui.form.on('BOM Item', {
         if(frm.doc.type != 'Project'){
             var d = locals[cdt][cdn];
             if(d.activity_type){
+                //set default activity_uom and activity_qty
+                frappe.call({
+                    method: 'frappe.client.get_value',
+                    args: {
+                            'doctype': 'Item',
+                            'filters': {'name': d.activity_type},
+                            'fieldname': [
+                                'stock_uom'
+                            ]
+                    },
+                    callback: function(r){
+                        if (!r.exc) {
+                            var stock_uom = r.message.stock_uom;
+                            frappe.model.set_value(d.doctype, d.name, "activity_uom", stock_uom);
+                        }
+                    }
+                })
+                //----------------------------
                 var flag = false;
                 var item = d.activity_type;      
                 $.each(frm.doc.items || [], function(i, v) {
@@ -453,12 +453,12 @@ frappe.ui.form.on('BOM Item', {
                                     var item_group = r.message.item_group;
                                     if(item_group != 'Services'){
                                         qty = flt(qty) + flt(v.activity_qty);
-                                        alert(flt(qty));
                                     }
                                     $.each(frm.doc.items || [], function(i, s) {
                                         if(s.item_code == item){
-                                            alert(flt(qty));
-                                            frappe.model.set_value(s.doctype, s.name, "qty", flt(qty)); 
+                                            frappe.model.set_value(s.doctype, s.name, "qty", flt(qty));
+                                            frappe.model.set_value(s.doctype, s.name, "activity_qty", flt(qty)); 
+                                            frappe.model.set_value(s.doctype, s.name, "activity_uom", s.uom); 
                                         }
                                     });
                                 }
