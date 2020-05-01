@@ -411,19 +411,21 @@ frappe.ui.form.on('BOM Item', {
     activity_type: function(frm, cdt, cdn){
         if(frm.doc.type != 'Project'){
             var d = locals[cdt][cdn];
-            var flag = false;
-            var item = d.activity_type;      
-            $.each(frm.doc.items || [], function(i, v) {
-                if(v.item_code == item){
-                    flag = true;
-                }
-            }); 
-            if(flag != true){
-                var bom_item = frm.add_child("items");
-                frappe.model.set_value(bom_item.doctype, bom_item.name, "item_code", item);
-                frappe.model.set_value(bom_item.doctype, bom_item.name, "activity_type", item);
-                cur_frm.refresh_field("items");
-            }  
+            if(d.activity_type){
+                var flag = false;
+                var item = d.activity_type;      
+                $.each(frm.doc.items || [], function(i, v) {
+                    if(v.item_code == item){
+                        flag = true;
+                    }
+                }); 
+                if(flag != true){
+                    var bom_item = frm.add_child("items");
+                    frappe.model.set_value(bom_item.doctype, bom_item.name, "item_code", item);
+                    frappe.model.set_value(bom_item.doctype, bom_item.name, "activity_type", item);
+                    cur_frm.refresh_field("items");
+                } 
+            } 
         }   
     },
     amount: function(frm, cdt, cdn){
@@ -432,20 +434,44 @@ frappe.ui.form.on('BOM Item', {
     activity_qty: function(frm, cdt,cdn){
         if(frm.doc.type != 'Project'){
             var d = locals[cdt][cdn];
-            var item = d.activity_type;      
-            $.each(frm.doc.items || [], function(i, v) {
-                if(v.item_code == item){
-                    if(d.pre_activity_qty>0){
-                        frappe.model.set_value(v.doctype, v.name, "qty", ((frm.doc.items[i].qty -d.pre_activity_qty) + d.activity_qty)); 
-                        d.pre_activity_qty = d.activity_qty ;
+            if(d.activity_type){
+                var item = d.activity_type;
+                var qty = 0;
+                $.each(frm.doc.items || [], function(i, v) {
+                    if(item == v.activity_type){
+                        frappe.call({
+                            method: 'frappe.client.get_value',
+                            args: {
+                                    'doctype': 'Item',
+                                    'filters': {'name': v.item_code},
+                                    'fieldname': [
+                                        'item_group'
+                                    ]
+                            },
+                            callback: function(r){
+                                if (!r.exc) {
+                                    var item_group = r.message.item_group;
+                                    if(item_group != 'Services'){
+                                        qty = flt(qty) + flt(v.activity_qty);
+                                        alert(flt(qty));
+                                    }
+                                    $.each(frm.doc.items || [], function(i, s) {
+                                        if(s.item_code == item){
+                                            alert(flt(qty));
+                                            frappe.model.set_value(s.doctype, s.name, "qty", flt(qty)); 
+                                        }
+                                    });
+                                }
+                            }
+                        })
                     }
-                    else{
-                        frappe.model.set_value(v.doctype, v.name, "qty", (d.activity_qty+d.qty));
-                        d.pre_activity_qty = d.activity_qty ;
-                    }
-                }
-            }); 
-            cur_frm.refresh_field("items");
+                }); 
+                cur_frm.refresh_field("items");
+            }
+            else{
+                msgprint('please select Item Activity');
+                d.activity_qty = 0;
+            }
         } 
     },
     activity_uom: function(frm, cdt,cdn){
