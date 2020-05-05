@@ -15,8 +15,7 @@ def get_sales_order_items(doctype, txt, searchfield, start, page_len, filters):
 
 @frappe.whitelist()
 def get_generic_details(g_bom):
-    bom_item_list = frappe.db.sql("""select bi.item_code,i.item_group,bi.activity_type,bi.qty,bi.uom,bi.rate,bi.amount,
-    bi.activity_uom,bi.activity_qty 
+    bom_item_list = frappe.db.sql("""select bi.item_code,i.item_group,bi.activity_type,bi.qty,bi.uom,bi.rate,bi.amount 
     from `tabBOM Item` bi, `tabBOM` b, `tabItem` i
     where b.name = bi.parent and bi.parenttype = 'BOM'
     and bi.item_code = i.item_code and i.disabled = 0
