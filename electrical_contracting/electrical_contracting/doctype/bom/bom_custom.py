@@ -15,8 +15,7 @@ def get_sales_order_items(doctype, txt, searchfield, start, page_len, filters):
 
 @frappe.whitelist()
 def get_generic_details(g_bom):
-    bom_item_list = frappe.db.sql("""select bi.item_code,i.item_group,bi.activity_type,bi.qty,bi.uom,bi.rate,bi.amount,
-    bi.activity_uom,bi.activity_qty 
+    bom_item_list = frappe.db.sql("""select bi.item_code,i.item_group,bi.activity_type,bi.qty,bi.uom,bi.rate,bi.amount 
     from `tabBOM Item` bi, `tabBOM` b, `tabItem` i
     where b.name = bi.parent and bi.parenttype = 'BOM'
     and bi.item_code = i.item_code and i.disabled = 0
@@ -30,7 +29,7 @@ def on_BOM_after_submit(doc, handler=""):
             project.Item_code = doc.item
             project.uom = doc.uom
             project.price_list = 'Standard Selling'
-            project.price_list_rate = doc.total_cost
+            project.price_list_rate = doc.total_bom_cost
             project.flags.ignore_permissions  = True
             project.update({
             'item_code': project.Item_code,
@@ -43,7 +42,7 @@ def on_BOM_after_submit(doc, handler=""):
             indicator = 'green')
     else:
 
-            frappe.db.sql("""update `tabItem Price` set price_list_rate = %s where item_code =%s""",(doc.total_cost, doc.item))
+            frappe.db.sql("""update `tabItem Price` set price_list_rate = %s where item_code =%s""",(doc.total_bom_cost, doc.item))
             frappe.msgprint(msg = 'Item Price Updated',
             title = 'Notification',
             indicator = 'green')
