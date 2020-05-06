@@ -1,0 +1,80 @@
+{
+ "creation": "2020-05-05 16:12:32.111068",
+ "doctype": "DocType",
+ "document_type": "Setup",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "activity_type",
+  "description",
+  "col_break1",
+  "hour_rate",
+  "time_in_mins",
+  "base_hour_rate",
+  "base_activity_cost"
+ ],
+ "fields": [
+  {
+   "fieldname": "activity_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Activity Type",
+   "oldfieldname": "operation_no",
+   "oldfieldtype": "Data",
+   "options": "Activity Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "in_list_view": 1,
+   "label": "Description",
+   "oldfieldname": "opn_description",
+   "oldfieldtype": "Text"
+  },
+  {
+   "fieldname": "col_break1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "hour_rate",
+   "fieldtype": "Currency",
+   "label": "Hour Rate"
+  },
+  {
+   "description": "In minutes",
+   "fieldname": "time_in_mins",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Activity Time ",
+   "oldfieldname": "time_in_mins",
+   "oldfieldtype": "Currency",
+   "reqd": 1
+  },
+  {
+   "fieldname": "base_hour_rate",
+   "fieldtype": "Currency",
+   "label": "Base Hour Rate(Company Currency)",
+   "options": "Company:company:default_currency",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "base_activity_cost",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Activity Cost",
+   "precision": "3",
+   "read_only": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-05-06 20:59:52.820675",
+ "modified_by": "Administrator",
+ "module": "Electrical Contracting",
+ "name": "BOM Activities",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC"
+}
