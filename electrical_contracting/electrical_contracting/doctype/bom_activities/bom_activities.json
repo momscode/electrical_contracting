@@ -18,7 +18,7 @@
    "fieldname": "activity_type",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Activity Type",
+   "label": "Activity Item",
    "oldfieldname": "operation_no",
    "oldfieldtype": "Data",
    "options": "Activity Type",
@@ -69,7 +69,7 @@
   }
  ],
  "istable": 1,
- "modified": "2020-05-06 20:59:52.820675",
+ "modified": "2020-05-06 22:29:53.017734",
  "modified_by": "Administrator",
  "module": "Electrical Contracting",
  "name": "BOM Activities",
