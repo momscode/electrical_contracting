@@ -29,7 +29,7 @@ def on_BOM_after_submit(doc, handler=""):
             project.Item_code = doc.item
             project.uom = doc.uom
             project.price_list = 'Standard Selling'
-            project.price_list_rate = doc.total_cost
+            project.price_list_rate = doc.total_bom_cost
             project.flags.ignore_permissions  = True
             project.update({
             'item_code': project.Item_code,
@@ -42,7 +42,7 @@ def on_BOM_after_submit(doc, handler=""):
             indicator = 'green')
     else:
 
-            frappe.db.sql("""update `tabItem Price` set price_list_rate = %s where item_code =%s""",(doc.total_cost, doc.item))
+            frappe.db.sql("""update `tabItem Price` set price_list_rate = %s where item_code =%s""",(doc.total_bom_cost, doc.item))
             frappe.msgprint(msg = 'Item Price Updated',
             title = 'Notification',
             indicator = 'green')
