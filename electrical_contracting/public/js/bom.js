@@ -368,6 +368,44 @@ frappe.ui.form.on('BOM Item', {
     }
 });
 frappe.ui.form.on('BOM Activities', {
+
+ uom:function(frm,cdt,cdn)
+ {
+    var d = locals[cdt][cdn];
+    var activity_type = d.activity_type;
+      
+    frappe.call({
+        method: 'frappe.client.get_value',
+        args: {
+                'doctype': 'Activity Item',
+                'filters': {'activity_type': activity_type },
+                'fieldname': [
+                    'per_minute_rate',
+                    'per_hour_rate',
+                    'per_day_rate'
+                ]
+    },
+    callback: function(s) {
+        
+
+        if(d.uom == 'Mins')
+        {
+           
+            frappe.model.set_value(d.doctype, d.name,"per_minutes_rate",s.message.per_minute_rate)
+        }
+        else if(d.uom=='Hr')
+        {
+            frappe.model.set_value(d.doctype, d.name,"per_hour_rate",s.message.per_hour_rate)
+        }
+        else
+        {
+            frappe.model.set_value(d.doctype, d.name,"per_day_rate",s.message.per_day_rate)  
+        }
+    }
+});
+ },
+
+
     activity_type:function(frm,cdt,cdn){
         var d = locals[cdt][cdn];
         var count =0;
@@ -385,37 +423,24 @@ frappe.ui.form.on('BOM Activities', {
         }
 
     },
-  
-    time_in_mins:function(frm,cdt,cdn)
+    minutes:function(frm,cdt,cdn)
     {
         var d = locals[cdt][cdn];
-        //var rate = 0;
-        var tim_in_mins = d.time_in_mins/60;
-        if(d.hour_rate)
-        {
-            var rate =tim_in_mins*d.hour_rate
-
-            frappe.model.set_value(d.doctype, d.name,"base_activity_cost",rate)
-        }
-        else{
-            frappe.model.set_value(d.doctype, d.name,"base_activity_cost",0)
-        }
-       
+        var _mins = d.per_minutes_rate * d.minutes;
+        frappe.model.set_value(d.doctype, d.name,"base_activity_cost",_mins)
     },
-    hour_rate:function(frm,cdt,cdn)
+    hour:function(frm,cdt,cdn)
     {
         var d = locals[cdt][cdn];
-        if(d.time_in_mins)
-        {
-        var tim_in_mins = d.time_in_mins/60;
-        var rate =tim_in_mins*d.hour_rate
-
-            frappe.model.set_value(d.doctype, d.name,"base_activity_cost",rate)
-        }
-        else
-        {
-            frappe.model.set_value(d.doctype, d.name,"base_activity_cost",0)
-        }
+        var _mins = d.per_hour_rate * d.hour;
+        frappe.model.set_value(d.doctype, d.name,"base_activity_cost",_mins)
+    },
+    days:function(frm,cdt,cdn)
+    {
+        var d = locals[cdt][cdn];
+        var _mins = d.per_day_rate * d.days;
+        frappe.model.set_value(d.doctype, d.name,"base_activity_cost",_mins)
     }
+   
    
 });
