@@ -75,19 +75,23 @@ frappe.ui.form.on('BOM', {
             })
             }
     },
-    validate: function(frm) {
+    validate: function(frm,cdt,cdn) {
+        var d =locals[cdt][cdn];
         var total_discount_rate = 0;
         var total_cost_with_discount = 0;
         var material_cost = 0;
-        //declare variable to calculate tota activity cost
-        //var activity_cost = 0;      
-        //calculate cost(material) and cost(activity)
+        var activity_cost = 0;
+        var total_cost =0;      
         $.each(frm.doc.items || [], function(i, s) {
             material_cost += flt(s.amount);
-            //calculate total activity cost from activity table
-            frm.set_value("stock_material_cost",material_cost);
-            //set total activity cost 'acivity_material_cost'
+            frm.set_value("stock_material_cost",material_cost); 
         });
+        $.each(frm.doc.activities || [], function(i, s) {
+            activity_cost += flt(s.base_activity_cost);
+            frm.set_value("activity_material_cost",activity_cost);
+        });
+        total_cost = d.activity_material_cost+d.stock_material_cost;
+        frm.set_value("total_bom_cost",total_cost);
         //check rate difference between generic and project specific bom
         if(frm.doc.type == 'Project'){
             if(frm.doc.specific_total_cost > frm.doc.generic_total_cost){
@@ -105,6 +109,7 @@ frappe.ui.form.on('BOM', {
             }
         }              
     },
+    
     btn_discount: function(frm){
         var total_discount_rate = 0;
         var total_cost_with_discount = 0;
@@ -273,22 +278,31 @@ frappe.ui.form.on('BOM', {
     }
 })
 frappe.ui.form.on('BOM Item', {
-    activity_type: function(frm, cdt, cdn){
-        //--statements----  
-    },
-    amount: function(frm, cdt, cdn){
-        //------statements-----
+
+    amount: function(frm, cdt, cdn)
+    {
     },
     item_code: function(frm, cdt, cdn){
+   
+        var df = frappe.meta.get_docfield("BOM Item","activity_type", cur_frm.doc.name);
+        var q_options = []; 
+        $.each(frm.doc.activities || [], function(i, v) {
+            q_options.push(v.activity_type)
+        });
+        df.options = q_options;
         var d = locals[cdt][cdn];
-        var item = d.item_code;
-        //check an Item already added in table or not      
-       /* $.each(frm.doc.items || [], function(i, v) {
-            if(v.item_code == item){
-                msgprint('item already selected in table');
-                frappe.model.set_value(v.doctype, v.name, "item_code", null);
+        var count =0;
+        $.each(frm.doc.items || [], function(i, v) {
+            if(d.item_code == v.item_code)
+            { 
+               count++;
             }
-        }); */
+        });
+        if(count>1)
+        {
+            frappe.msgprint(__("Item Already Exist"));
+            frappe.model.set_value(d.doctype, d.name,"item_code",'')
+        }
         if(frm.doc.type == 'Project'){
             var item_group = '';
    //-------to get item group of selected item----------
@@ -352,4 +366,56 @@ frappe.ui.form.on('BOM Item', {
         })
       }       
     }
+});
+frappe.ui.form.on('BOM Activities', {
+    activity_type:function(frm,cdt,cdn){
+        var d = locals[cdt][cdn];
+        var count =0;
+        $.each(frm.doc.activities || [], function(i, v) {
+            if(d.activity_type == v.activity_type)
+            {
+               count++;
+              
+            }
+        });
+        if(count>1)
+        {
+            frappe.msgprint(__("Activity Type Already Exist"));
+            frappe.model.set_value(d.doctype, d.name,"activity_type",'')
+        }
+
+    },
+  
+    time_in_mins:function(frm,cdt,cdn)
+    {
+        var d = locals[cdt][cdn];
+        //var rate = 0;
+        var tim_in_mins = d.time_in_mins/60;
+        if(d.hour_rate)
+        {
+            var rate =tim_in_mins*d.hour_rate
+
+            frappe.model.set_value(d.doctype, d.name,"base_activity_cost",rate)
+        }
+        else{
+            frappe.model.set_value(d.doctype, d.name,"base_activity_cost",0)
+        }
+       
+    },
+    hour_rate:function(frm,cdt,cdn)
+    {
+        var d = locals[cdt][cdn];
+        if(d.time_in_mins)
+        {
+        var tim_in_mins = d.time_in_mins/60;
+        var rate =tim_in_mins*d.hour_rate
+
+            frappe.model.set_value(d.doctype, d.name,"base_activity_cost",rate)
+        }
+        else
+        {
+            frappe.model.set_value(d.doctype, d.name,"base_activity_cost",0)
+        }
+    }
+   
 });
