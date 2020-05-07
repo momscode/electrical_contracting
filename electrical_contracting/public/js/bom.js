@@ -271,15 +271,9 @@ frappe.ui.form.on('BOM', {
                             var item = r.message[i];
                             //d.activity_type = item.activity_type;
                             frappe.model.set_value(d.doctype, d.name, "activity_type", item.activity_type);
-                            d.description = item.description;
-                            d.hour_rate = item.hour_rate;
                             d.uom = item.uom;
-                            d.per_minutes_rate = item.per_minutes_rate;
-                            d.minutes = item.minutes;
-                            d.per_hour_rate = item.per_hour_rate;
-                            d.hour = item.hour;
-                            d.per_day_rate = item.per_day_rate;
-                            d.days = item.days;
+                            d.rate = item.rate;
+                            d.qty = item.qty;
                             d.base_activity_cost = item.base_activity_cost;
                             /*frappe.model.set_value(d.doctype, d.name, "activity_type", item.activity_type);
                             frappe.model.set_value(d.doctype, d.name, "description", item.description);
@@ -428,79 +422,81 @@ frappe.ui.form.on('BOM Item', {
     }
 });
 frappe.ui.form.on('BOM Activities', {
-
- uom:function(frm,cdt,cdn)
+activity_type:function(frm,cdt,cdn)
  {
     var d = locals[cdt][cdn];
-    var activity_type = d.activity_type;
-      
-    frappe.call({
-        method: 'frappe.client.get_value',
-        args: {
-                'doctype': 'Activity Item',
-                'filters': {'activity_type': activity_type },
-                'fieldname': [
-                    'per_minute_rate',
-                    'per_hour_rate',
-                    'per_day_rate'
-                ]
-    },
-    callback: function(s) {
-        
-
-        if(d.uom == 'Mins')
-        {
-           
-            frappe.model.set_value(d.doctype, d.name,"per_minutes_rate",s.message.per_minute_rate)
-        }
-        else if(d.uom=='Hr')
-        {
-            frappe.model.set_value(d.doctype, d.name,"per_hour_rate",s.message.per_hour_rate)
-        }
-        else
-        {
-            frappe.model.set_value(d.doctype, d.name,"per_day_rate",s.message.per_day_rate)  
-        }
-    }
-});
- },
-
-
-    activity_type:function(frm,cdt,cdn){
-        var d = locals[cdt][cdn];
-        var count =0;
-        $.each(frm.doc.activities || [], function(i, v) {
-            if(d.activity_type == v.activity_type)
-            {
-               count++;
-              
+    if(d.activity_type){
+        frappe.call({
+            method: "electrical_contracting.electrical_contracting.doctype.bom.bom_custom.get_Activity_details",
+            args:{
+                'activity_type': d.activity_type
+                },
+            callback:function(r){
+                for (var i=0; i<r.message.length; i++){
+                    var uom= r.message[i].uom
+                    if(d.uom == uom )
+                        {
+                            var rate =r.message[i].rate
+                            frappe.model.set_value(d.doctype, d.name,"rate",rate)
+                        }
+                    else
+                        {
+                            frappe.model.set_value(d.doctype, d.name,"rate",rate)
+                        } 
+                }
             }
-        });
-        if(count>1)
-        {
-            frappe.msgprint(__("Activity Type Already Exist"));
-            frappe.model.set_value(d.doctype, d.name,"activity_type",'')
-        }
-
-    },
-    minutes:function(frm,cdt,cdn)
-    {
-        var d = locals[cdt][cdn];
-        var _mins = d.per_minutes_rate * d.minutes;
-        frappe.model.set_value(d.doctype, d.name,"base_activity_cost",_mins)
-    },
-    hour:function(frm,cdt,cdn)
-    {
-        var d = locals[cdt][cdn];
-        var _mins = d.per_hour_rate * d.hour;
-        frappe.model.set_value(d.doctype, d.name,"base_activity_cost",_mins)
-    },
-    days:function(frm,cdt,cdn)
-    {
-        var d = locals[cdt][cdn];
-        var _mins = d.per_day_rate * d.days;
-        frappe.model.set_value(d.doctype, d.name,"base_activity_cost",_mins)
+         });
     }
-   
+},
+uom:function(frm,cdt,cdn)
+ {
+    var d = locals[cdt][cdn]
+    frappe.call({
+            method: "electrical_contracting.electrical_contracting.doctype.bom.bom_custom.get_Activity_details",
+            args:{
+                'activity_type': d.activity_type
+                },
+                callback:function(r)
+                {
+                    var flag = false;
+                    var rate =0;
+                    var activity_cost =0;
+                    for (var i=0; i<r.message.length; i++)
+                    {
+                        var uom= r.message[i].uom;
+                        if(d.uom == uom )
+                        {
+                            flag = true;
+                            rate =r.message[i].rate;
+                            frappe.model.set_value(d.doctype, d.name,"rate",rate)
+                        }                                            
+                    }
+                    if(flag == false){
+                        frappe.model.set_value(d.doctype, d.name,"rate",rate)
+                        frappe.model.set_value(d.doctype, d.name,"base_activity_cost",activity_cost)
+                        msgprint("Rate not found")
+                    }
+
+                }
+
+
+               });
+},
+qty:function(frm,cdt,cdn){
+
+    var d = locals[cdt][cdn]
+    var _mins = d.qty * d.rate;
+    frappe.model.set_value(d.doctype, d.name,"base_activity_cost",_mins)
+
+},
+rate:function(frm,cdt,cdn){
+    
+    var d = locals[cdt][cdn]
+    var _mins = d.qty * d.rate;
+    frappe.model.set_value(d.doctype, d.name,"base_activity_cost",_mins)
+
+},
+
+
    
 });
