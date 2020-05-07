@@ -123,7 +123,33 @@ frappe.ui.form.on('BOM', {
         var total_cost_with_discount = 0;
         var material_cost = 0;
         var activity_cost = 0;
-        //calculate cost(material) and cost(activity)
+        //fetch material cost,actvity cost,total cost of generic bom
+        frappe.call({
+            method: 'frappe.client.get_value',
+            args:{
+                'doctype':'BOM',
+                'filters':{
+                    'name': frm.doc.g_bom
+                },
+                'fieldname':[
+                    'total_bom_cost',
+                    'stock_material_cost',
+                    'activity_material_cost'
+                ]
+            },
+            callback:function(s){
+                if (!s.exc) {
+                    frm.set_value("generic_material_cost",s.message.stock_material_cost);
+                    frm.set_value("generic_activity_cost",s.message.activity_material_cost);
+                    frm.set_value("generic_total_cost",s.message.total_bom_cost);
+                    frm.refresh_field("generic_material_cost");
+                    frm.refresh_field("generic_activity_cost");
+                    frm.refresh_field("generic_total_cost");
+                    frm.refresh();
+                }
+            }
+        });
+        //calculate cost(material)
         $.each(frm.doc.items || [], function(i, s) {
             material_cost += flt(s.amount);
 
@@ -265,31 +291,6 @@ frappe.ui.form.on('BOM', {
                     }
                 }
             })
-            //fetch material cost,actvity cost,total cost of generic bom
-            frappe.call({
-                method: 'frappe.client.get_value',
-                args:{
-                    'doctype':'BOM',
-                    'filters':{
-                        'name': frm.doc.g_bom
-                    },
-                    'fieldname':[
-                        'total_bom_cost',
-                        'stock_material_cost',
-                        'activity_material_cost'
-                    ]
-                },
-                callback:function(s){
-                    if (!s.exc) {
-                        frm.set_value("generic_material_cost",s.message.stock_material_cost);
-                        frm.set_value("generic_activity_cost",s.message.activity_material_cost);
-                        frm.set_value("generic_total_cost",s.message.total_bom_cost);
-                        frm.refresh_field("generic_material_cost");
-                        frm.refresh_field("generic_activity_cost");
-                        frm.refresh_field("generic_total_cost");
-                    }
-                }
-            });
         }
     },
     g_item: function(frm){
