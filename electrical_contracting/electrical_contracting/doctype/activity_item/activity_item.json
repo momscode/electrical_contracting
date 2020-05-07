@@ -6,42 +6,26 @@
  "engine": "InnoDB",
  "field_order": [
   "activity_type",
-  "per_minute_rate",
-  "per_hour_rate",
-  "per_day_rate"
+  "activity_item_details"
  ],
  "fields": [
   {
    "fieldname": "activity_type",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Activity Type",
+   "label": "Activity Item",
    "reqd": 1,
    "unique": 1
   },
   {
-   "fieldname": "per_minute_rate",
-   "fieldtype": "Currency",
-   "label": "Per Minute Rate",
-   "precision": "8",
-   "reqd": 1
-  },
-  {
-   "fieldname": "per_hour_rate",
-   "fieldtype": "Currency",
-   "label": "Per Hour Rate",
-   "precision": "8",
-   "reqd": 1
-  },
-  {
-   "fieldname": "per_day_rate",
-   "fieldtype": "Currency",
-   "label": "Per Day Rate",
-   "precision": "8",
+   "fieldname": "activity_item_details",
+   "fieldtype": "Table",
+   "label": "Activity Item Details",
+   "options": "Activity Item Details",
    "reqd": 1
   }
  ],
- "modified": "2020-05-06 23:41:13.575343",
+ "modified": "2020-05-07 14:28:00.161450",
  "modified_by": "Administrator",
  "module": "Electrical Contracting",
  "name": "Activity Item",

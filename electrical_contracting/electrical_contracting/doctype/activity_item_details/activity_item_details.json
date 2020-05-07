@@ -1,0 +1,38 @@
+{
+ "creation": "2020-05-07 09:15:27.859001",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "uom",
+  "rate"
+ ],
+ "fields": [
+  {
+   "fieldname": "uom",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "UOM",
+   "options": "Minute\nHour\nDay",
+   "search_index": 1
+  },
+  {
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Rate",
+   "reqd": 1,
+   "search_index": 1
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-05-07 18:06:17.682807",
+ "modified_by": "Administrator",
+ "module": "Electrical Contracting",
+ "name": "Activity Item Details",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

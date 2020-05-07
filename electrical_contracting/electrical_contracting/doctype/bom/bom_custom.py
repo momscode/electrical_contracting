@@ -1,10 +1,7 @@
 import frappe
 
-
-
 @frappe.whitelist()
 def get_sales_order_items(doctype, txt, searchfield, start, page_len, filters):
-
     return frappe.db.sql("""select si.item_code
     from `tabSales Order Item` si, `tabSales Order` s
     where s.name = si.parent and si.parenttype = 'Sales Order'
@@ -25,7 +22,7 @@ def get_generic_details(g_bom):
 
 @frappe.whitelist()
 def get_generic_bom_activities(g_bom):
-    bom_activity_list = frappe.db.sql("""select ba.activity_type,ba.description,ba.hour_rate,ba.uom,
+    bom_activity_list = frappe.db.sql("""select ba.activity_type,ba.description,ba.hour_rate,ba.uom,ba.qty,
     ba.per_minutes_rate,ba.minutes,ba.per_hour_rate,ba.hour,ba.per_day_rate,ba.days,ba.base_activity_cost  
     from `tabBOM Activities` ba, `tabBOM` b
     where b.name = ba.parent and ba.parenttype = 'BOM'
@@ -60,6 +57,13 @@ def on_BOM_after_submit(doc, handler=""):
    
    
     return
+
+@frappe.whitelist()
+def get_Activity_details(activity_type):
+    bom_activity_list = frappe.db.sql("""select rate,uom from `tabActivity Item Details` where parent=%s """,(activity_type),as_dict=1)
+
+    return bom_activity_list
+
         
 
 
