@@ -90,8 +90,16 @@ frappe.ui.form.on('BOM', {
             activity_cost += flt(s.base_activity_cost);
             frm.set_value("activity_material_cost",activity_cost);
         });
-        total_cost = d.activity_material_cost+d.stock_material_cost;
-        frm.set_value("total_bom_cost",total_cost);
+        if(frm.doc.type == 'General'){
+            total_cost = d.activity_material_cost+d.stock_material_cost;
+            frm.set_value("total_bom_cost",total_cost);
+        }
+        else{
+            if(!frm.doc.total_bom_cost){
+                msgprint('Please apply discount');
+                frappe.validated = false;
+            }
+        }
         //check rate difference between generic and project specific bom
         if(frm.doc.type == 'Project'){
             if(frm.doc.specific_total_cost > frm.doc.generic_total_cost){
@@ -118,14 +126,18 @@ frappe.ui.form.on('BOM', {
         //calculate cost(material) and cost(activity)
         $.each(frm.doc.items || [], function(i, s) {
             material_cost += flt(s.amount);
+
             frm.set_value("specific_material_cost",material_cost);
                             
         });
         //calculate cost(activity) from activity table
         //----hint---
-        //activity_cost += flt(s.amount);
-        //frm.set_value("specific_activity_cost",activity_cost);
-        //--------------------
+        $.each(frm.doc.activities || [], function(i, s) {
+            activity_cost += flt(s.base_activity_cost);
+            
+            frm.set_value("specific_activity_cost",activity_cost);
+                            
+        });
         //set discount % and rate in bom item table
         $.each(frm.doc.bom_discount_detial || [], function(i, d) {
             total_cost_with_discount = 0;
@@ -150,8 +162,8 @@ frappe.ui.form.on('BOM', {
                                 frappe.model.set_value(v.doctype, v.name,"discount_rate",discount_rate)
                             }
                             //calculate total cost with margin
-                            total_cost_with_discount += (flt(v.amount)+flt(discount_rate));
-                            frm.set_value("specific_total_cost",total_cost_with_discount);
+                            total_cost_with_discount += (flt(v.amount) - flt(discount_rate));
+                           // frm.set_value("specific_total_cost",total_cost_with_discount);
                             frm.set_value("total_cost_with_discount",total_cost_with_discount);
 
                        }
@@ -159,6 +171,12 @@ frappe.ui.form.on('BOM', {
                 })
             });
         });
+    },
+    specific_total_cost: function(frm){
+        frm.set_value("total_bom_cost",frm.doc.specific_total_cost);
+    },
+    total_cost_with_discount: function(frm){
+        frm.set_value("specific_total_cost",flt(frm.doc.total_cost_with_discount) + flt(frm.doc.specific_activity_cost));
     },
     type: function(frm){
         if(frm.doc.type == 'General'){
@@ -212,6 +230,47 @@ frappe.ui.form.on('BOM', {
                     }
                 }
             })
+            //fetch BOM Activities
+            frappe.call({
+                method: "electrical_contracting.electrical_contracting.doctype.bom.bom_custom.get_generic_bom_activities",
+                args:{
+                    'g_bom': frm.doc.g_bom
+                },
+                callback:function(r){
+                    if(!r.exc){
+                        frm.clear_table("activities");
+                        frm.refresh_field("activities");
+                        for (var i=0; i<r.message.length; i++){
+                            var d = frm.add_child("activities");
+                            var item = r.message[i];
+                            //d.activity_type = item.activity_type;
+                            frappe.model.set_value(d.doctype, d.name, "activity_type", item.activity_type);
+                            d.description = item.description;
+                            d.hour_rate = item.hour_rate;
+                            d.uom = item.uom;
+                            d.per_minutes_rate = item.per_minutes_rate;
+                            d.minutes = item.minutes;
+                            d.per_hour_rate = item.per_hour_rate;
+                            d.hour = item.hour;
+                            d.per_day_rate = item.per_day_rate;
+                            d.days = item.days;
+                            d.base_activity_cost = item.base_activity_cost;
+                            /*frappe.model.set_value(d.doctype, d.name, "activity_type", item.activity_type);
+                            frappe.model.set_value(d.doctype, d.name, "description", item.description);
+                            frappe.model.set_value(d.doctype, d.name, "hour_rate", item.hour_rate);
+                            frappe.model.set_value(d.doctype, d.name, "uom", item.uom);
+                            frappe.model.set_value(d.doctype, d.name, "per_minutes_rate", item.per_minutes_rate);
+                            frappe.model.set_value(d.doctype, d.name, "minutes", item.minutes);
+                            frappe.model.set_value(d.doctype, d.name, "per_hour_rate", item.per_hour_rate);
+                            frappe.model.set_value(d.doctype, d.name, "hour", item.hour);
+                            frappe.model.set_value(d.doctype, d.name, "per_day_rate", item.per_day_rate);
+                            frappe.model.set_value(d.doctype, d.name, "days", item.days);
+                            frappe.model.set_value(d.doctype, d.name, "base_activity_cost", item.base_activity_cost);*/                    
+                            frm.refresh_field("activities");
+                        }
+                    }
+                }
+            })
             //fetch material cost,actvity cost,total cost of generic bom
             frappe.call({
                 method: 'frappe.client.get_value',
@@ -221,7 +280,7 @@ frappe.ui.form.on('BOM', {
                         'name': frm.doc.g_bom
                     },
                     'fieldname':[
-                        'total_cost',
+                        'total_bom_cost',
                         'stock_material_cost',
                         'activity_material_cost'
                     ]
@@ -230,7 +289,7 @@ frappe.ui.form.on('BOM', {
                     if (!s.exc) {
                         frm.set_value("generic_material_cost",s.message.stock_material_cost);
                         frm.set_value("generic_activity_cost",s.message.activity_material_cost);
-                        frm.set_value("generic_total_cost",s.message.total_cost);
+                        frm.set_value("generic_total_cost",s.message.total_bom_cost);
                         frm.refresh_field("generic_material_cost");
                         frm.refresh_field("generic_activity_cost");
                         frm.refresh_field("generic_total_cost");
@@ -283,14 +342,14 @@ frappe.ui.form.on('BOM Item', {
     {
     },
     item_code: function(frm, cdt, cdn){
-   
+        var d = locals[cdt][cdn];
         var df = frappe.meta.get_docfield("BOM Item","activity_type", cur_frm.doc.name);
         var q_options = []; 
         $.each(frm.doc.activities || [], function(i, v) {
             q_options.push(v.activity_type)
         });
         df.options = q_options;
-        var d = locals[cdt][cdn];
+       /* var d = locals[cdt][cdn];
         var count =0;
         $.each(frm.doc.items || [], function(i, v) {
             if(d.item_code == v.item_code)
@@ -302,7 +361,7 @@ frappe.ui.form.on('BOM Item', {
         {
             frappe.msgprint(__("Item Already Exist"));
             frappe.model.set_value(d.doctype, d.name,"item_code",'')
-        }
+        }*/
         if(frm.doc.type == 'Project'){
             var item_group = '';
    //-------to get item group of selected item----------
@@ -310,7 +369,7 @@ frappe.ui.form.on('BOM Item', {
                 method: 'frappe.client.get_value',
                 args: {
                         'doctype': 'Item',
-                        'filters': {'name': item},
+                        'filters': {'name': d.item_code},
                         'fieldname': [
                             'item_group',
                             'stock_uom'
