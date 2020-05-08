@@ -344,19 +344,6 @@ frappe.ui.form.on('BOM Item', {
             q_options.push(v.activity_type)
         });
         df.options = q_options;
-       /* var d = locals[cdt][cdn];
-        var count =0;
-        $.each(frm.doc.items || [], function(i, v) {
-            if(d.item_code == v.item_code)
-            { 
-               count++;
-            }
-        });
-        if(count>1)
-        {
-            frappe.msgprint(__("Item Already Exist"));
-            frappe.model.set_value(d.doctype, d.name,"item_code",'')
-        }*/
         if(frm.doc.type == 'Project'){
             var item_group = '';
    //-------to get item group of selected item----------
@@ -427,23 +414,44 @@ activity_type:function(frm,cdt,cdn)
     var d = locals[cdt][cdn];
     if(d.activity_type){
         frappe.call({
+            method: "electrical_contracting.electrical_contracting.doctype.bom.bom_custom.get_uom_details",
+            args:{
+                'activity_type': d.activity_type
+                },
+            callback:function(r){
+        var df = frappe.meta.get_docfield("BOM Activities","uom", cur_frm.doc.name);
+        var q_options = [];
+        for (var i=0; i<r.message.length; i++){
+            var a = r.message[i].uom;
+            q_options.push(a)
+        }
+        df.options = q_options;   
+    }
+        });
+    
+        frappe.call({
             method: "electrical_contracting.electrical_contracting.doctype.bom.bom_custom.get_Activity_details",
             args:{
                 'activity_type': d.activity_type
                 },
             callback:function(r){
+                var flag = false;
                 for (var i=0; i<r.message.length; i++){
                     var uom= r.message[i].uom
                     if(d.uom == uom )
                         {
+                            flag = true;
                             var rate =r.message[i].rate
                             frappe.model.set_value(d.doctype, d.name,"rate",rate)
                         }
-                    else
-                        {
-                            frappe.model.set_value(d.doctype, d.name,"rate",rate)
-                        } 
+                    
                 }
+                if(flag == false){
+                    frappe.model.set_value(d.doctype, d.name,"rate",rate)
+                    frappe.model.set_value(d.doctype, d.name,"base_activity_cost",activity_cost)
+                    msgprint("Rate not found")
+                }
+
             }
          });
     }
@@ -461,7 +469,7 @@ uom:function(frm,cdt,cdn)
                 {
                     var flag = false;
                     var rate =0;
-                    var activity_cost =0;
+                    var activity_cost =0
                     for (var i=0; i<r.message.length; i++)
                     {
                         var uom= r.message[i].uom;
