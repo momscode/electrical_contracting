@@ -451,6 +451,7 @@ activity_type:function(frm,cdt,cdn)
 uom:function(frm,cdt,cdn)
  {
     var d = locals[cdt][cdn]
+    if(d.activity_type){
     frappe.call({
             method: "electrical_contracting.electrical_contracting.doctype.bom.bom_custom.get_Activity_details",
             args:{
@@ -481,6 +482,7 @@ uom:function(frm,cdt,cdn)
 
 
                });
+            }
 },
 qty:function(frm,cdt,cdn){
 
