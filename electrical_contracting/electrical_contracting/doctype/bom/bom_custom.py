@@ -60,9 +60,15 @@ def on_BOM_after_submit(doc, handler=""):
 
 @frappe.whitelist()
 def get_Activity_details(activity_type):
-    bom_activity_list = frappe.db.sql("""select rate,uom from `tabActivity Item Details` where parent=%s """,(activity_type),as_dict=1)
+    activity_list = frappe.db.sql("""select  rate,uom from `tabActivity Item Details` where parent=%s """,(activity_type),as_dict=1)
 
-    return bom_activity_list
+    return activity_list
+
+@frappe.whitelist()
+def get_uom_details(activity_type):
+    uom_list = frappe.db.sql("""select  distinct uom from `tabActivity Item Details`  """,as_dict=1)
+
+    return uom_list
 
         
 
