@@ -9,7 +9,7 @@ frappe.ui.form.on('BOM', {
             frm.set_query("item", function() {
                 return {
                     filters: [
-                        ["Item","item_group", "=", "Generic Sellable Items"]
+                        ["Item","item_group", "=", "AMSECC Sellable Item"]
                     ]
                 }
             });
@@ -17,7 +17,7 @@ frappe.ui.form.on('BOM', {
                 var child = locals[cdt][cdn];
                 return {    
                     filters:[
-                        ['item_group', 'in', ['Generic Items']]
+                        ['item_group', 'in', ['Generic Component Item']]
                     ]
                 }
             }
@@ -28,7 +28,7 @@ frappe.ui.form.on('BOM', {
             frm.set_query("item", function() {
                 return {
                     filters: [
-                        ["Item","item_group", "=", "Project Sellable Items"]
+                        ["Item","item_group", "=", "Project Sellable Item"]
                     ]
                 }
             });
@@ -37,7 +37,7 @@ frappe.ui.form.on('BOM', {
                 //console.log(child);
                 return {    
                     filters:[
-                        ['item_group', '!=', 'Generic Items']
+                        ['item_group', '!=', 'Generic Component Item']
                     ]
                 }
             }
