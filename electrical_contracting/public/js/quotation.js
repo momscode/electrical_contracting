@@ -14,144 +14,119 @@ frappe.ui.form.on('Quotation Item', {
                 fieldname:["name","stock_material_cost","activity_material_cost"]
             }, 
             callback: function(r) { 
-                // set the returned value in a field
                 frappe.model.set_value(d.doctype, d.name,"bom_no",r.message.name)
                 frappe.model.set_value(d.doctype, d.name,"stock_material_cost",r.message.stock_material_cost)
                 frappe.model.set_value(d.doctype, d.name,"activity_material_cost",r.message.activity_material_cost)
+                var rate = 0;
+                var activity_rate = 0;
+                var material_overhead = 0;
+                var activity_overhead = 0;
+                material_overhead = flt(d.stock_material_cost)*(flt(d.material_overhead)/100);
+                frappe.model.set_value(d.doctype, d.name,"material_overhead_amount",material_overhead)
+                activity_overhead = flt(d.activity_material_cost)*(flt(d.activity_overhead)/100);
+                frappe.model.set_value(d.doctype, d.name,"activity_overhead_amount",activity_overhead)
+                var amount =flt(d.stock_material_cost)+flt(d.material_overhead_amount);
+                rate =flt(amount)*(flt(d.margin)/100);
+                frappe.model.set_value(d.doctype, d.name,"margin_rate_of_stock_items",rate)
+                var amount =flt(d.activity_material_cost)+flt(d.activity_overhead_amount);
+                activity_rate = flt(amount)*(flt(d.margin_of_activity_items)/100);
+                frappe.model.set_value(d.doctype, d.name,"margin_rate_of_activity_items",activity_rate)
             }
         })
      },
+activity_material_cost:function(frm,cdt,cdn)
+{
+    var d = locals[cdt][cdn];
+    var total_rate =d.activity_material_cost;
+    frappe.model.set_value(d.doctype, d.name,"rate_with_margin_of_activity_items",total_rate)
+},
+stock_material_cost:function(frm,cdt,cdn)
+{
+    var d = locals[cdt][cdn];
+    var total_rate =d.stock_material_cost;
+    frappe.model.set_value(d.doctype, d.name,"rate_with_margin_of_stock_items",total_rate)
+},
      margin: function(frm,cdt,cdn) {
         var d = locals[cdt][cdn];
         var rate = 0;
-        rate = flt(d.stock_material_cost)*(flt(d.margin)/100);
+        var amount =flt(d.stock_material_cost)+flt(d.material_overhead_amount);
+        rate = flt(amount)*(flt(d.margin)/100);
         frappe.model.set_value(d.doctype, d.name,"margin_rate_of_stock_items",rate)
     },
+    material_overhead: function(frm,cdt,cdn) {
+        var d = locals[cdt][cdn];
+        var material_overhead = 0;
+        var total_rate =0;
+        var margin = 0;
+        var rate = 0;
+        material_overhead = flt(d.stock_material_cost)*(flt(d.material_overhead)/100);
+        frappe.model.set_value(d.doctype, d.name,"material_overhead_amount",material_overhead)
+        if(d.margin != 0)
+        {
+        var amount =flt(d.stock_material_cost)+flt(d.material_overhead_amount);
+        rate = flt(amount)*(flt(d.margin)/100);
+        frappe.model.set_value(d.doctype, d.name,"margin_rate_of_stock_items",rate)
+        }
+        var total_rate =0;
+        var total_rate1 =0;
+        total_rate =d.stock_material_cost + d.margin_rate_of_stock_items +d.material_overhead_amount;
+        frappe.model.set_value(d.doctype, d.name,"rate_with_margin_of_stock_items",total_rate)
+        total_rate1 = d.margin_rate_of_stock_items +d.margin_rate_of_activity_items+d.material_overhead_amount+d.activity_overhead_amount;
+        frappe.model.set_value(d.doctype, d.name,"margin_rate_or_amount",total_rate1)
+    },
+    activity_overhead: function(frm,cdt,cdn) {
+        var d = locals[cdt][cdn];
+        var activity_overhead = 0;
+        activity_overhead = flt(d.activity_material_cost)*(flt(d.activity_overhead)/100);
+        frappe.model.set_value(d.doctype, d.name,"activity_overhead_amount",activity_overhead)
+        
+        if(d.margin_of_activity_items != 0)
+        {
+        var amount =flt(d.activity_material_cost)+flt(d.activity_overhead_amount);
+        var rate = flt(amount)*(flt(d.margin_of_activity_items)/100);
+        frappe.model.set_value(d.doctype, d.name,"margin_rate_of_activity_items",rate)
+        }
+        var total_rate =d.activity_material_cost + d.margin_rate_of_activity_items +d.activity_overhead_amount+d.material_overhead_amount;
+        frappe.model.set_value(d.doctype, d.name,"rate_with_margin_of_activity_items",total_rate)
+        var total_rate1 = d.margin_rate_of_stock_items +d.margin_rate_of_activity_items+d.activity_overhead_amount+d.material_overhead_amount;
+        frappe.model.set_value(d.doctype, d.name,"margin_rate_or_amount",total_rate1)
+        
+    },
+  
     margin_rate_of_stock_items: function(frm,cdt,cdn) {
         var d = locals[cdt][cdn];
         var rate = 0;
         var total_rate =0;
         var total_rate1 =0;
-        rate = (flt(d.margin_rate_of_stock_items)/flt(d.stock_material_cost))*100;
-        frappe.model.set_value(d.doctype, d.name,"margin",rate)
-         total_rate =d.stock_material_cost + d.margin_rate_of_stock_items;
+        total_rate =d.stock_material_cost + d.margin_rate_of_stock_items +d.material_overhead_amount;
         frappe.model.set_value(d.doctype, d.name,"rate_with_margin_of_stock_items",total_rate)
-        total_rate1 = d.margin_rate_of_stock_items +d.margin_rate_of_activity_items;
+        total_rate1 = d.margin_rate_of_stock_items +d.margin_rate_of_activity_items+d.material_overhead_amount+d.activity_overhead_amount;
         frappe.model.set_value(d.doctype, d.name,"margin_rate_or_amount",total_rate1)
         
     },
     margin_of_activity_items: function(frm,cdt,cdn) {
         var d = locals[cdt][cdn];
-        var rate = 0;
-        var total_rate = 0;
-        rate = flt(d.activity_material_cost)*(flt(d.margin_of_activity_items)/100);
-        frappe.model.set_value(d.doctype, d.name,"margin_rate_of_activity_items",rate)
-       
+        var activity_rate = 0;
+        var amount =flt(d.activity_material_cost)+flt(d.activity_overhead_amount);
+        activity_rate = flt(amount)*(flt(d.margin_of_activity_items)/100);
+        frappe.model.set_value(d.doctype, d.name,"margin_rate_of_activity_items",activity_rate)
     },
     margin_rate_of_activity_items: function(frm,cdt,cdn) {
         var d = locals[cdt][cdn];
         var rate = 0;
         var total_rate =0;
         var total_rate1 =0;
-        rate = (flt(d.margin_rate_of_activity_items)/flt(d.activity_material_cost))*100;
-        frappe.model.set_value(d.doctype, d.name,"margin_of_activity_items",rate)
-         total_rate =d.activity_material_cost + d.margin_rate_of_activity_items;
+         total_rate =d.activity_material_cost + d.margin_rate_of_activity_items +d.activity_overhead_amount+d.material_overhead_amount;
         frappe.model.set_value(d.doctype, d.name,"rate_with_margin_of_activity_items",total_rate)
-        total_rate1 = d.margin_rate_of_stock_items +d.margin_rate_of_activity_items;
+        total_rate1 = d.margin_rate_of_stock_items +d.margin_rate_of_activity_items+d.activity_overhead_amount+d.material_overhead_amount;
         frappe.model.set_value(d.doctype, d.name,"margin_rate_or_amount",total_rate1)
-    }
-  /*   discount_on_stock_item: function(frm,cdt,cdn){
-        var d = locals[cdt][cdn];
-        var bom_no = d.bom_no;
-        frappe.call({
-            method:"electrical_contracting.electrical_contracting.doctype.quotation.quotation_custom.get_bom_items",
-            args:{"bom" : bom_no},
-            callback: function(r) {
-               
-                if (!r.exc) {
-                    var stock_rate = 0;
-                    var activity_rate = 0;
-                    var stock_rate_discount = 0;
-                    var activity_rate_discount =0;
-                    for (var i=0; i<r.message.length; i++)
-                    {
-                        var item = r.message[i];
-                        if(item.is_stock_item == 1)
-                        {
-                            stock_rate += item.amount;
-                           
-                        }
-                       
-                       
-                      stock_rate_discount = flt(stock_rate)*(flt(d.discount_on_stock_item)/100);
-                                     
-
-                    }
-                
-                frappe.model.set_value(d.doctype, d.name,"stock_item_rate",stock_rate_discount)
-                
-            
-                 }
-        
-                // set the returned value in a field
-               // frappe.model.set_value(d.doctype, d.name,"bom_no",r.message.name)
-            
-        }
-        })
-     },
-     
-     discount_on_activity_items: function(frm,cdt,cdn){
-        var d = locals[cdt][cdn];
-        var bom_no = d.bom_no;
-        frappe.call({
-            method:"electrical_contracting.electrical_contracting.doctype.quotation.quotation_custom.get_bom_activity",
-            args:{"bom" : bom_no},
-            callback: function(r) {
-                if (!r.exc) {
-                    var activity_rate = 0;
-                    var activity_rate_discount =0;
-                    for (var i=0; i<r.message.length; i++)
-                    {
-                        var item = r.message[i];
-                        if(item.is_stock_item != 1)
-                        {
-                            activity_rate +=item.amount;                         
-                        }
-                      activity_rate_discount =flt(activity_rate)*(flt(d.discount_on_activity_items)/100);
-
-                    }
-                frappe.model.set_value(d.doctype, d.name,"activity_item_rtae",activity_rate_discount)
-        
-                // set the returned value in a field
-               // frappe.model.set_value(d.doctype, d.name,"bom_no",r.message.name)
-            }
-        }
-        })
-     },
-     stock_item_rate: function(frm,cdt,cdn){
-        var d = locals[cdt][cdn];
-        var rate = d.stock_item_rate;
-        var act_rate = d.activity_item_rtae;
-        var disc_rate = 0;
-        disc_rate = rate +act_rate;
-        frappe.model.set_value(d.doctype, d.name,"discount_rate",disc_rate)
-        frappe.model.set_value(d.doctype, d.name,"discount_amount",disc_rate)
-     },
-     activity_item_rtae: function(frm,cdt,cdn){
-        var d = locals[cdt][cdn];
-        var rate = d.stock_item_rate;
-        var act_rate = d.activity_item_rtae;
-        var disc_rate = 0;
-        disc_rate = rate +act_rate;
-        frappe.model.set_value(d.doctype, d.name,"discount_rate",disc_rate)
-        frappe.model.set_value(d.doctype, d.name,"discount_amount",disc_rate)
-     },*/
-     
+    }   
 });
 frappe.ui.form.on("Quotation", {
     validate:function(frm)
     {
-       
+        
+        
         var total_Material_cost= 0;
         var total_activity_cost = 0;
         var total_activity_margin_amount = 0;
@@ -159,6 +134,8 @@ frappe.ui.form.on("Quotation", {
         var total_Material_with_margin = 0;
         var total_activity_with_margin= 0;
         var activity_cost = 0;
+        var total_material_overhead =0;
+        var  total_activity_overhead =0;
         $.each(frm.doc.items || [], function(i, v) {
             total_Material_cost = total_Material_cost + v.stock_material_cost
             total_activity_cost = total_activity_cost + v.activity_material_cost 
@@ -166,37 +143,52 @@ frappe.ui.form.on("Quotation", {
             total_activity_margin_amount = total_activity_margin_amount + v.margin_rate_of_activity_items
             total_Material_with_margin = total_Material_with_margin + v.rate_with_margin_of_stock_items
             total_activity_with_margin = total_activity_with_margin + v.rate_with_margin_of_activity_items
+            total_material_overhead     = total_material_overhead + v.material_overhead_amount
+            total_activity_overhead     = total_activity_overhead + v.activity_overhead_amount
         })
         frm.set_value("total_material_cost",total_Material_cost);
         frm.set_value("total_activity_cost",total_activity_cost);
         frm.set_value("total_material_margin_amount",total_Material_margin_amount);
         frm.set_value("total_activity_margin_amount",total_activity_margin_amount);
         frm.set_value("total_material_with_margin",total_Material_with_margin);
-        frm.set_value("total_activity_with_margin",total_activity_with_margin);
+        frm.set_value("total_material_overhead",total_material_overhead);
+        frm.set_value("total_activity_overhead",total_activity_overhead);
     },
-    default_stock_item_discount: function(frm) {
     
-            $.each(frm.doc.items || [], function(i, v)
-            {
-               frappe.model.set_value(v.doctype, v.name,"margin",frm.doc.default_stock_item_discount)
-               
-           }) 
-        
+default_stock_item_discount: function(frm) {
+   /* cur_frm.fields_dict.default_stock_item_discount.$input.on("click", function(evt){
+        var a=frm.doc.default_stock_item_discount;
+    
+        cur_frm.set_df_property("apply_defaults", "hidden", false);
+        cur_frm.fields_dict.apply_defaults.$input.on("click", function(evt){
+            var a=frm.doc.default_stock_item_discount;
+          
+            $.each(frm.doc.items || [], function(i, v) {
+                frappe.model.set_value(v.doctype, v.name,"material_overhead",frm.doc.default_material_overhead)
+            })
+           
+        })
+        })*/
+    $.each(frm.doc.items || [], function(i, v){
+        frappe.model.set_value(v.doctype, v.name,"margin",frm.doc.default_stock_item_discount)      
+    })    
  },
  default_activity_item_discount: function(frm) {
-    
     $.each(frm.doc.items || [], function(i, v) {
         frappe.model.set_value(v.doctype, v.name,"margin_of_activity_items",frm.doc.default_activity_item_discount)
     })
-    /*if(frm.doc.items.length >1) 
-    {
-        
-    
-    }
-    else
-    {
-   msgprint({message: 'Please select Item from Table', title: __('Message'), indicator:'blue'})
-   frm.refresh_field("default_activity_item_discount");
-    }*/
-}
+},
+default_activity_overhead: function(frm) {
+     $.each(frm.doc.items || [], function(i, v) {
+        frappe.model.set_value(v.doctype, v.name,"activity_overhead",frm.doc.default_activity_overhead)
+     })
+   
+},
+default_material_overhead: function(frm) {
+    $.each(frm.doc.items || [], function(i, v) {
+        frappe.model.set_value(v.doctype, v.name,"material_overhead",frm.doc.default_material_overhead)
+    })
+},
+
+
 });
