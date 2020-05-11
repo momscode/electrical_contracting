@@ -124,21 +124,18 @@ stock_material_cost:function(frm,cdt,cdn)
 frappe.ui.form.on("Quotation", {
     refresh:function(frm){
        
-        cur_frm.fields_dict.default_stock_item_discount.$input.on("click", function(evt){
+        cur_frm.fields_dict.default_stock_item_discount.$input.on("click", function(evt){  
             var a=frm.doc.default_stock_item_discount;
                 cur_frm.set_df_property("apply_changed_defaults", "hidden", false);
-            cur_frm.fields_dict.default_stock_item_discount.$input.on("click", function(evt){
                 cur_frm.fields_dict.apply_changed_defaults.$input.on("click", function(evt){
                 $.each(frm.doc.items || [], function(i, v) {
                     if(a==v.margin)
                     {
-                        alert("hai")
                         frappe.model.set_value(v.doctype, v.name,"margin",frm.doc.default_stock_item_discount)
                         cur_frm.set_df_property("apply_changed_defaults", "hidden", true);
                     }
                 })
                 })   
-            })
         })
     if(frm.doc.default_activity_item_discount!=0)
     {
@@ -195,11 +192,20 @@ if(frm.doc.default_activity_item_discount!=0)
 
        
     },
-    validate:function(frm)
-    {
-        
-       
-        
+    default_margin: function(frm) {
+        $.each(frm.doc.items || [], function(i, v) {
+            frappe.model.set_value(v.doctype, v.name,"margin_rate_or_amount",frm.doc.default_margin)
+        })
+    },
+    
+validate:function(frm) {
+        var total_price_list_rate = 0;
+        var total_margin_amount = 0;
+        $.each(frm.doc.items || [], function(i, d) {
+        total_price_list_rate+= flt(d.price_list_rate) * flt(d.qty);
+    });
+    frm.set_value("total_margin_amount",frm.doc.total - total_price_list_rate);
+    frm.set_value("total_price_list_rate", total_price_list_rate);
         var total_Material_cost= 0;
         var total_activity_cost = 0;
         var total_activity_margin_amount = 0;
@@ -226,6 +232,7 @@ if(frm.doc.default_activity_item_discount!=0)
         frm.set_value("total_material_margin_amount",total_Material_margin_amount);
         frm.set_value("total_activity_margin_amount",total_activity_margin_amount);
         frm.set_value("total_material_with_margin",total_Material_with_margin);
+        frm.set_value("total_activity_with_margin",total_activity_with_margin);
         frm.set_value("total_material_overhead",total_material_overhead);
         frm.set_value("total_activity_overhead",total_activity_overhead);
         total_overhead_amount =frm.doc.total_material_overhead +frm.doc.total_activity_overhead;
