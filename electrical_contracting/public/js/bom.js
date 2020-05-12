@@ -5,11 +5,29 @@ frappe.ui.form.on('BOM', {
     },
     refresh: function(frm){
         if(frm.doc.type == 'General'){
+            //get all item group whosw parent group is 'AMSECC Sellable Item'
+            var item = [];
+            frappe.call({
+                method:"electrical_contracting.electrical_contracting.doctype.bom.bom_custom.get_sellable_item_group",
+                args:{
+                },
+                callback: function(s) {
+                    if(!s.exc){
+                        console.log(s.message);                        
+                        for (var i=0; i<=s.message.length; i++){
+                            item.push(s.message[i].item_group_name);
+                        }
+                    }
+                    
+                }
+            });
+            
+            //---------------------------------------------------------------
             frm.set_df_property("g_item", "reqd", 0);
             frm.set_query("item", function() {
                 return {
                     filters: [
-                        ["Item","item_group", "=", "AMSECC Sellable Item"]
+                        ["Item","item_group", "in", item]
                     ]
                 }
             });
