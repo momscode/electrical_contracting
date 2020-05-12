@@ -65,6 +65,11 @@ def get_Activity_details(activity_type):
     return activity_list
 
 @frappe.whitelist()
+def get_sellable_item_group():
+    item_group_list = frappe.db.sql("""select item_group_name from `tabItem Group` where parent_item_group = 'Generic Sellable Item' """,as_dict=1)
+    return item_group_list
+
+@frappe.whitelist()
 def get_uom_details(activity_type):
     uom_list = frappe.db.sql("""select  distinct uom from `tabActivity Item Details`  """,as_dict=1)
 
