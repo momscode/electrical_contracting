@@ -122,11 +122,17 @@ stock_material_cost:function(frm,cdt,cdn)
     }   
 });
 frappe.ui.form.on("Quotation", {
+    onload:function(frm)
+    {
+        $("Button[data-fieldname=apply_defaults]").addClass("btn-primary");
+    },
+    
+    
     refresh:function(frm){
-       
+        
         cur_frm.fields_dict.default_stock_item_discount.$input.on("click", function(evt){  
             var a=frm.doc.default_stock_item_discount;
-                cur_frm.set_df_property("apply_changed_defaults", "hidden", false);
+                cur_frm.set_df_property("apply_changed_defaults", "hidden", true);
                 cur_frm.fields_dict.apply_changed_defaults.$input.on("click", function(evt){
                 $.each(frm.doc.items || [], function(i, v) {
                     if(a==v.margin)
@@ -141,7 +147,7 @@ frappe.ui.form.on("Quotation", {
     {
         cur_frm.fields_dict.default_activity_item_discount.$input.on("click", function(evt){
             var a=frm.doc.default_activity_item_discount;
-            cur_frm.set_df_property("apply_changed_defaults", "hidden", false);
+            cur_frm.set_df_property("apply_changed_defaults", "hidden", Tr);
             cur_frm.fields_dict.apply_changed_defaults.$input.on("click", function(evt){
                 $.each(frm.doc.items || [], function(i, v) {
                     if(a==v.margin_of_activity_items)
@@ -158,7 +164,7 @@ if(frm.doc.default_activity_item_discount!=0)
     {
     cur_frm.fields_dict.default_activity_overhead.$input.on("click", function(evt){
         var a=frm.doc.default_activity_overhead;
-        cur_frm.set_df_property("apply_changed_defaults", "hidden", false);
+        cur_frm.set_df_property("apply_changed_defaults", "hidden", true);
         cur_frm.fields_dict.apply_changed_defaults.$input.on("click", function(evt){
             $.each(frm.doc.items || [], function(i, v) {
                 if(a==v.activity_overhead)
@@ -176,7 +182,7 @@ if(frm.doc.default_activity_item_discount!=0)
     {
     cur_frm.fields_dict.default_material_overhead.$input.on("click", function(evt){
         var a=frm.doc.default_material_overhead;
-        cur_frm.set_df_property("apply_changed_defaults", "hidden", false);
+        cur_frm.set_df_property("apply_changed_defaults", "hidden", true);
         cur_frm.fields_dict.apply_changed_defaults.$input.on("click", function(evt){
             $.each(frm.doc.items || [], function(i, v) {
                 if(a==v.material_overhead)
@@ -252,7 +258,7 @@ default_stock_item_discount: function(frm) {
     
         cur_frm.fields_dict.default_stock_item_discount.$input.on("click", function(evt){
             var a=frm.doc.default_stock_item_discount;
-            cur_frm.set_df_property("apply_changed_defaults", "hidden", false);
+            cur_frm.set_df_property("apply_changed_defaults", "hidden", true);
             cur_frm.fields_dict.apply_changed_defaults.$input.on("click", function(evt){
             $.each(frm.doc.items || [], function(i, v) {
                 if(a==v.margin)
@@ -278,7 +284,7 @@ default_stock_item_discount: function(frm) {
     })
     cur_frm.fields_dict.default_activity_item_discount.$input.on("click", function(evt){
         var a=frm.doc.default_activity_item_discount;
-        cur_frm.set_df_property("apply_changed_defaults", "hidden", false);
+        cur_frm.set_df_property("apply_changed_defaults", "hidden", true);
         cur_frm.fields_dict.apply_changed_defaults.$input.on("click", function(evt){
             $.each(frm.doc.items || [], function(i, v) {
                 if(a==v.margin_of_activity_items)
@@ -301,7 +307,7 @@ default_activity_overhead: function(frm) {
     })
     cur_frm.fields_dict.default_activity_overhead.$input.on("click", function(evt){
         var a=frm.doc.default_activity_overhead;
-        cur_frm.set_df_property("apply_changed_defaults", "hidden", false);
+        cur_frm.set_df_property("apply_changed_defaults", "hidden", true);
         cur_frm.fields_dict.apply_changed_defaults.$input.on("click", function(evt){
             $.each(frm.doc.items || [], function(i, v) {
                 if(a==v.activity_overhead)
@@ -325,7 +331,7 @@ default_material_overhead: function(frm) {
     })
     cur_frm.fields_dict.default_material_overhead.$input.on("click", function(evt){
         var a=frm.doc.default_material_overhead;
-        cur_frm.set_df_property("apply_changed_defaults", "hidden", false);
+        cur_frm.set_df_property("apply_changed_defaults", "hidden", true);
         cur_frm.fields_dict.apply_changed_defaults.$input.on("click", function(evt){
             $.each(frm.doc.items || [], function(i, v) {
                 if(a==v.material_overhead)
