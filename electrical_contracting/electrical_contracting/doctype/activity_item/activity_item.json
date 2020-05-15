@@ -1,4 +1,5 @@
 {
+ "allow_import": 1,
  "autoname": "field:activity_type",
  "creation": "2020-05-06 23:30:22.023836",
  "doctype": "DocType",
@@ -25,7 +26,7 @@
    "reqd": 1
   }
  ],
- "modified": "2020-05-07 14:28:00.161450",
+ "modified": "2020-05-15 11:24:50.529405",
  "modified_by": "Administrator",
  "module": "Electrical Contracting",
  "name": "Activity Item",
