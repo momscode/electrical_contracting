@@ -31,7 +31,8 @@ doctype_js = {
     "Activity Cost" : "public/js/activity_cost.js",
     "BOM" : "public/js/bom.js",
     "Project" : "public/js/project.js",
-    "Quotation":"public/js/quotation.js"
+    "Quotation":"public/js/quotation.js",
+    "Opportunity":"public/js/opportunity.js"
     }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
