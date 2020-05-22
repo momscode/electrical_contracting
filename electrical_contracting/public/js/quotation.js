@@ -125,11 +125,8 @@ frappe.ui.form.on("Quotation", {
     onload:function(frm)
     {
         $("Button[data-fieldname=apply_defaults]").addClass("btn-primary");
-    },
-    
-    
-    refresh:function(frm){
-        
+    },   
+    /*refresh:function(frm){   
         cur_frm.fields_dict.default_stock_item_discount.$input.on("click", function(evt){  
             var a=frm.doc.default_stock_item_discount;
                 cur_frm.set_df_property("apply_changed_defaults", "hidden", true);
@@ -197,7 +194,7 @@ if(frm.doc.default_activity_item_discount!=0)
     }
 
        
-    },
+    },*/
     default_margin: function(frm) {
         $.each(frm.doc.items || [], function(i, v) {
             frappe.model.set_value(v.doctype, v.name,"margin_rate_or_amount",frm.doc.default_margin)
