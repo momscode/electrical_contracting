@@ -1,7 +1,2 @@
-frappe.ui.form.on('Opportunity', {
-        refresh(frm) {
-                frm.remove_custom_button("Close");
-                frm.remove_custom_button("Lost");
-                frm.remove_custom_button("Reopen");
-	}
-});
+cur_frm.add_fetch('party_name', 'market_segment', 'market_segment');
+cur_frm.add_fetch('party_name', 'industry', 'industry_type');
