@@ -206,10 +206,10 @@ frappe.ui.form.on('BOM', {
                                 frappe.model.set_value(v.doctype, v.name,"discount_rate",discount_rate)
                             }
                             //calculate total cost with margin
-                            total_cost_with_discount += (flt(v.amount) - flt(discount_rate));
+                            //total_cost_with_discount += (flt(v.amount) - flt(discount_rate));
                            // frm.set_value("specific_total_cost",total_cost_with_discount);
-                            frm.set_value("total_cost_with_discount",total_cost_with_discount);
-
+                            //frm.set_value("total_cost_with_discount",total_cost_with_discount);
+                            frm.set_value("total_cost_with_discount",material_cost - total_discount_rate);
                        }
                     }
                 })
