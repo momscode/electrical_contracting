@@ -3,8 +3,22 @@ frappe.ui.form.on('BOM', {
     setup: function(frm) {
         //-------statements---------
     },
-    refresh: function(frm){
-        if(frm.doc.type == 'General'){
+    refresh:function(frm, cdt, cdn){
+       
+       
+    },
+    refresh:function(frm, cdt, cdn){
+
+        if(frm.doc.type == 'General'){ 
+        var d = locals[cdt][cdn];
+        var d = locals[cdt][cdn];
+        var df = frappe.meta.get_docfield("BOM Item","activity_type", cur_frm.doc.name);
+        var q_options = []; 
+        $.each(frm.doc.activities || [], function(i, v) {
+            q_options.push(v.activity_type)
+        });
+        df.options = q_options;
+
             //get all item group whosw parent group is 'AMSECC Sellable Item'
             var item = [];
             frappe.call({
@@ -42,6 +56,15 @@ frappe.ui.form.on('BOM', {
             frm.refresh_field("items");
         }
         else{
+            var d = locals[cdt][cdn];
+            var d = locals[cdt][cdn];
+            var df = frappe.meta.get_docfield("BOM Item","activity_type", cur_frm.doc.name);
+            var q_options = []; 
+            $.each(frm.doc.activities || [], function(i, v) {
+            q_options.push(v.activity_type)
+            });
+            df.options = q_options;
+           
             frm.set_df_property("g_item", "reqd", 1);
             frm.set_query("item", function() {
                 return {
@@ -60,6 +83,7 @@ frappe.ui.form.on('BOM', {
                 }
             }
             frm.refresh_field("items");
+            
         }
     },
     onload: function(frm,cdt,cdn){
@@ -349,11 +373,8 @@ frappe.ui.form.on('BOM', {
         }
     }
 })
-frappe.ui.form.on('BOM Item', {
-
-    amount: function(frm, cdt, cdn)
-    {
-    },
+frappe.ui.form.on('BOM Item', { 
+    
     item_code: function(frm, cdt, cdn){
         var d = locals[cdt][cdn];
         var df = frappe.meta.get_docfield("BOM Item","activity_type", cur_frm.doc.name);
@@ -362,6 +383,7 @@ frappe.ui.form.on('BOM Item', {
             q_options.push(v.activity_type)
         });
         df.options = q_options;
+       // frm.refresh_field('df.activity_type')
         if(frm.doc.type == 'Project'){
             var item_group = '';
    //-------to get item group of selected item----------
@@ -427,7 +449,7 @@ frappe.ui.form.on('BOM Item', {
     }
 });
 frappe.ui.form.on('BOM Activities', {
-activity_type:function(frm,cdt,cdn)
+    refresh:function(frm,cdt,cdn)
  {
     var d = locals[cdt][cdn];
     if(d.activity_type){
@@ -474,6 +496,7 @@ activity_type:function(frm,cdt,cdn)
          });
     }
 },
+
 uom:function(frm,cdt,cdn)
  {
     var d = locals[cdt][cdn]
