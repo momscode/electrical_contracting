@@ -26,7 +26,6 @@ def on_sales_order_after_submit(doc, handler=""):
         'warehouse_name': warehouse.warehouse_name
         }).insert()
 
-
     frappe.msgprint(msg = 'Project And Warehouse Created',
        title = 'Notification',
        indicator = 'green'

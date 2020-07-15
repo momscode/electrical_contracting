@@ -20,10 +20,20 @@ def get_generic_details(g_bom):
 
     return bom_item_list
 
+#@frappe.whitelist()
+#def get_generic_bom_activities(g_bom):
+#    bom_activity_list = frappe.db.sql("""select ba.activity_type,ba.hour_rate,ba.uom,ba.qty,
+#    ba.per_minutes_rate,ba.minutes,ba.per_hour_rate,ba.hour,ba.per_day_rate,ba.days,ba.base_activity_cost  
+#    from `tabBOM Activities` ba, `tabBOM` b
+#    where b.name = ba.parent and ba.parenttype = 'BOM'
+#    and ba.docstatus = 1 and ba.parent = %s order by ba.idx asc """,(g_bom),as_dict=1)
+
+#    return bom_activity_list
+
 @frappe.whitelist()
 def get_generic_bom_activities(g_bom):
-    bom_activity_list = frappe.db.sql("""select ba.activity_type,ba.description,ba.hour_rate,ba.uom,ba.qty,
-    ba.per_minutes_rate,ba.minutes,ba.per_hour_rate,ba.hour,ba.per_day_rate,ba.days,ba.base_activity_cost  
+    bom_activity_list = frappe.db.sql("""select ba.activity_type,ba.uom,ba.qty,
+    ba.rate,ba.base_activity_cost  
     from `tabBOM Activities` ba, `tabBOM` b
     where b.name = ba.parent and ba.parenttype = 'BOM'
     and ba.docstatus = 1 and ba.parent = %s order by ba.idx asc """,(g_bom),as_dict=1)

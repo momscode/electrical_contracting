@@ -3,7 +3,7 @@ import frappe
 from frappe.model.naming import set_name_by_naming_series
 
 def on_project_on_submit(doc, handler=""):
-    item_list = frappe.db.sql("""select si.item_code
+    item_list = frappe.db.sql("""select si.item_code,si.item_name,si.qty
     from `tabSales Order Item` si, `tabSales Order` s
     where s.name = si.parent and si.parenttype = 'Sales Order'
     and s.docstatus = 1 and si.parent = %s""",(doc.sales_order),as_dict=1)
@@ -68,6 +68,27 @@ def on_project_on_submit(doc, handler=""):
             'deferred_revenue_account': item.deferred_revenue_account,
             'item_defaults': item.item_defaults
         }).insert()
+
+    for t in item_list:
+        task = frappe.new_doc('Task')
+        task.subject = t.item_name
+        task.project = doc.name
+        task.priority = 'Low'
+        task.is_group = 1
+        task.planned_qty = t.qty
+        task.flags.ignore_permissions = True
+        task.update({
+            'subject': task.subject,
+            'project': task.project,
+            'priority': task.priority,
+            'is_group': task.is_group,
+            'planned_qty':task.planned_qty
+        }).insert()
+    
+    frappe.msgprint(msg = 'Task has been created',
+       title = 'Notification',
+       indicator = 'green'
+    )
 
     frappe.msgprint(msg = 'Specific items has been created',
        title = 'Notification',
