@@ -3,10 +3,7 @@ frappe.ui.form.on('BOM', {
     setup: function(frm) {
         //-------statements---------
     },
-    refresh:function(frm, cdt, cdn){
-       
-       
-    },
+   
     refresh:function(frm, cdt, cdn){
 
         if(frm.doc.type == 'General'){ 
@@ -63,7 +60,7 @@ frappe.ui.form.on('BOM', {
             $.each(frm.doc.activities || [], function(i, v) {
             q_options.push(v.activity_type)
             });
-            df.options = q_options;
+             df.options = q_options;
            
             frm.set_df_property("g_item", "reqd", 1);
             frm.set_query("item", function() {
@@ -546,8 +543,5 @@ rate:function(frm,cdt,cdn){
     var _mins = d.qty * d.rate;
     frappe.model.set_value(d.doctype, d.name,"base_activity_cost",_mins)
 
-},
-
-
-   
+}, 
 });
