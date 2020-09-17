@@ -76,13 +76,15 @@ def on_project_on_submit(doc, handler=""):
         task.priority = 'Low'
         task.is_group = 1
         task.planned_qty = t.qty
+        task.actual_qty = t.qty
         task.flags.ignore_permissions = True
         task.update({
             'subject': task.subject,
             'project': task.project,
             'priority': task.priority,
             'is_group': task.is_group,
-            'planned_qty':task.planned_qty
+            'planned_qty':task.planned_qty,
+            'actual_qty':task.actual_qty
         }).insert()
     
     frappe.msgprint(msg = 'Task has been created',
