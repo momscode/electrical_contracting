@@ -9,11 +9,11 @@ frappe.ui.form.on('Quotation Item', {
                 filters: {
                     item: item_code,
                     is_default : 1
-
                 },
                 fieldname:["name","stock_material_cost","activity_material_cost"]
             }, 
             callback: function(r) { 
+               
                 frappe.model.set_value(d.doctype, d.name,"bom_no",r.message.name)
                 frappe.model.set_value(d.doctype, d.name,"stock_material_cost",r.message.stock_material_cost)
                 frappe.model.set_value(d.doctype, d.name,"activity_material_cost",r.message.activity_material_cost)
@@ -191,16 +191,13 @@ if(frm.doc.default_activity_item_discount!=0)
         })
     
 })
-    }
-
-       
+    }     
     },*/
     default_margin: function(frm) {
         $.each(frm.doc.items || [], function(i, v) {
             frappe.model.set_value(v.doctype, v.name,"margin_rate_or_amount",frm.doc.default_margin)
         })
-    },
-    
+    },   
 validate:function(frm) {
         var total_price_list_rate = 0;
         var total_margin_amount = 0;
@@ -228,8 +225,7 @@ validate:function(frm) {
             total_activity_with_margin = total_activity_with_margin + v.rate_with_margin_of_activity_items
             total_material_overhead     = total_material_overhead + v.material_overhead_amount
             total_activity_overhead     = total_activity_overhead + v.activity_overhead_amount
-        })
-       
+        })  
         frm.set_value("total_material_cost",total_Material_cost);
         frm.set_value("total_activity_cost",total_activity_cost);
         frm.set_value("total_material_margin_amount",total_Material_margin_amount);
@@ -240,10 +236,8 @@ validate:function(frm) {
         frm.set_value("total_activity_overhead",total_activity_overhead);
         total_overhead_amount =frm.doc.total_material_overhead +frm.doc.total_activity_overhead;
         frm.set_value("total_overhead_amount",total_overhead_amount);
-    },
-    
+    },  
 default_stock_item_discount: function(frm) {
-    
         cur_frm.fields_dict.apply_defaults.$input.on("click", function(evt){
         $.each(frm.doc.items || [], function(i, v) {
             frappe.model.set_value(v.doctype, v.name,"margin",frm.doc.default_stock_item_discount)
@@ -252,7 +246,6 @@ default_stock_item_discount: function(frm) {
             frappe.model.set_value(v.doctype, v.name,"material_overhead",frm.doc.default_material_overhead)
         })
     }) 
-    
         cur_frm.fields_dict.default_stock_item_discount.$input.on("click", function(evt){
             var a=frm.doc.default_stock_item_discount;
             cur_frm.set_df_property("apply_changed_defaults", "hidden", true);
@@ -265,10 +258,7 @@ default_stock_item_discount: function(frm) {
                 }
             })
             })
-           
-            
-        })    
-        
+        }) 
  },
  default_activity_item_discount: function(frm) {
     cur_frm.fields_dict.apply_defaults.$input.on("click", function(evt){
@@ -314,7 +304,6 @@ default_activity_overhead: function(frm) {
                 }
             })
         })
-    
     }) 
 },
 default_material_overhead: function(frm) {
@@ -338,7 +327,6 @@ default_material_overhead: function(frm) {
                 }
             })
         })
-    
 })
 },
 });

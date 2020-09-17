@@ -39,6 +39,15 @@ def get_generic_bom_activities(g_bom):
     and ba.docstatus = 1 and ba.parent = %s order by ba.idx asc """,(g_bom),as_dict=1)
 
     return bom_activity_list
+@frappe.whitelist()
+def get_bom_items(g_bom,activity_type):
+    bom_activity_list = frappe.db.sql("""select ba.item_code,ba.activity_type,ba.uom,ba.qty,ba.discount_percentage,ba.discount_rate,ba.rate,ba.amount,
+    ba.stock_uom 
+    from `tabBOM Item` ba, `tabBOM` b
+    where b.name = ba.parent and ba.parenttype ='BOM'
+    and ba.docstatus = 1 and ba.parent = %s  and ba.activity_type= %s order by ba.idx asc """,(g_bom,activity_type),as_dict=1)
+
+    return bom_activity_list
 
 def on_BOM_after_submit(doc, handler=""):
     bom_item_list = frappe.db.sql("""select item_code from `tabItem Price` where item_code= %s """,(doc.item),as_dict=1)
