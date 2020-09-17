@@ -22,7 +22,7 @@ frappe.ui.form.on("Task", {
         frm.doc.project);
         if(frm.doc.actual_qty<frm.doc.completed_qty)
         {
-            frappe.msgprint(__(`Completed Qty Exceeds the Actual Qty`));
+            frappe.msgprint(__(`Completed Qty Exceeds the Planned Qty`));
             frappe.validated = false;
         }
 },
@@ -47,7 +47,7 @@ cur_frm.add_fetch('task', 'project', 'project');
 frappe.ui.form.on("Task", {
 validate: function(frm) {
 if (frm.doc.completed_qty > frm.doc.actual_qty) {
-    frappe.msgprint(__(`Completed Quantity Cannot be greater than Actual Quantity.`));
+    frappe.msgprint(__(`Completed Quantity Cannot be greater than Planned Quantity.`));
              }
 if(frm.doc.parent_task != null)
 {

@@ -135,7 +135,7 @@ frappe.ui.form.on('Material Request', {
                             });  
                         }
                         else{
-                            alert("parent task");
+                           
                         //set bom corresponding to task and project 
                         frappe.call({
                             method: 'frappe.client.get_value',
@@ -207,7 +207,7 @@ frappe.ui.form.on('Material Request', {
                     for (var i=0; i<r.message.length; i++){
                         var d = frm.add_child("items");
                         var item = r.message[i];
-                        alert(item.rate);
+                      
                         var quantity=item.qty*qty;
                         frappe.model.set_value(d.doctype, d.name, "item_code", item.item_code);
                         frappe.model.set_value(d.doctype, d.name, "qty", (item.qty*qty));
