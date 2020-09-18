@@ -66,12 +66,12 @@ if(frm.doc.parent_task != null)
                     frappe.call({
                             "method": "electrical_contracting.electrical_contracting.doctype.task.task_custom.sum_of_actual_qty",
                             args: {
-                                    parent_task: frm.doc.parent_task
-                                    //current_task: frm.doc.name
+                                    parent_task: frm.doc.parent_task,
+                                    current_task: frm.doc.name
                                 },
                                 callback: function (d) {
                                       if(d.message!=0)
-                                           {
+                                           {  
                                             sum_child_task_actual_qty= parseInt(d.message.actual_qty)+parseInt(frm.doc.actual_qty);
                                               if(sum_child_task_actual_qty>parent_task_actual_qty)
                                                {
