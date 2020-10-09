@@ -1,0 +1,75 @@
+{
+ "creation": "2020-09-24 15:30:01.581429",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "activity_item",
+  "estimated",
+  "utilized",
+  "additional_consumed",
+  "status",
+  "expected_start_date",
+  "expected_end_date"
+ ],
+ "fields": [
+  {
+   "fieldname": "activity_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Activity Item",
+   "options": "Activity Item",
+   "read_only": 1
+  },
+  {
+   "fieldname": "estimated",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Estimated Duration ",
+   "read_only": 1
+  },
+  {
+   "fieldname": "utilized",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Utilized",
+   "read_only": 1
+  },
+  {
+   "fieldname": "additional_consumed",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Overutilized",
+   "read_only": 1
+  },
+  {
+   "fieldname": "expected_start_date",
+   "fieldtype": "Date",
+   "label": "Expected Start Date "
+  },
+  {
+   "fieldname": "expected_end_date",
+   "fieldtype": "Date",
+   "label": "Expected End Date "
+  },
+  {
+   "default": "Pending",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Pending\nPlanned"
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-10-01 12:18:06.101968",
+ "modified_by": "Administrator",
+ "module": "Electrical Contracting",
+ "name": "Activity Data",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

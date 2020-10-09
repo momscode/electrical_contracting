@@ -37,6 +37,7 @@ doctype_js = {
     "Material Request":"public/js/material_request.js",
     "Timesheet":"public/js/timesheet.js",
     "Task":"public/js/task.js"
+    
     }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 doctype_list_js = {
@@ -114,7 +115,18 @@ doc_events = {
     },
     "Sales Order":{
         "on_submit":"electrical_contracting.electrical_contracting.doctype.sales_order.sales_order_custom.on_sales_order_after_submit"
-    }
+    },
+    "Project Measurement":{
+        "on_cancel":"electrical_contracting.electrical_contracting.doctype.project_measurement.project_measurement.on_project_measurement_on_cancel",
+        "on_submit":"electrical_contracting.electrical_contracting.doctype.project_measurement.project_measurement.on_project_measurement_submit"
+    },
+    "Timesheet":{
+        "on_submit":"electrical_contracting.electrical_contracting.doctype.timesheet.timesheet_custom.on_timesheet_after_submit",
+        "on_cancel":"electrical_contracting.electrical_contracting.doctype.timesheet.timesheet_custom.on_timesheet_on_cancel"
+    },
+
+
+    
  }
 
 # Scheduled Tasks

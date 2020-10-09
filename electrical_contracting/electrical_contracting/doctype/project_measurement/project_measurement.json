@@ -1,0 +1,151 @@
+{
+ "allow_import": 1,
+ "allow_rename": 1,
+ "autoname": "PM-.YYYY.-.#####",
+ "creation": "2020-09-23 21:18:50.492085",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "project",
+  "child_task",
+  "qty",
+  "planned_qty",
+  "completed_qty",
+  "measured_qty",
+  "column_break_7",
+  "parent_task",
+  "type",
+  "remark",
+  "task",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1
+  },
+  {
+   "fieldname": "child_task",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Child Task",
+   "options": "Task"
+  },
+  {
+   "fieldname": "qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Qty"
+  },
+  {
+   "fieldname": "planned_qty",
+   "fieldtype": "Float",
+   "label": "Planned Qty"
+  },
+  {
+   "fieldname": "completed_qty",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Completed Qty"
+  },
+  {
+   "fieldname": "measured_qty",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Validated Qty"
+  },
+  {
+   "fieldname": "column_break_7",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "parent_task",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Parent Task",
+   "options": "Task"
+  },
+  {
+   "fieldname": "remark",
+   "fieldtype": "Small Text",
+   "label": "Remark"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Project Measurement",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Type",
+   "options": "\nCompleted\nValidated",
+   "reqd": 1
+  },
+  {
+   "fieldname": "task",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Task",
+   "options": "Task"
+  }
+ ],
+ "icon": "fa fa-puzzle-piece",
+ "is_submittable": 1,
+ "max_attachments": 4,
+ "modified": "2020-10-03 11:30:15.723949",
+ "modified_by": "Administrator",
+ "module": "Electrical Contracting",
+ "name": "Project Measurement",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Projects User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All"
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Projects Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_name_in_global_search": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_seen": 1,
+ "track_views": 1
+}
