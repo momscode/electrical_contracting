@@ -2,7 +2,8 @@ import frappe
 
 def on_sales_order_after_submit(doc, handler=""):
     project = frappe.new_doc('Project')
-    project.project_name = doc.name
+    project.project_name = doc.short_description
+    project.proj_name = doc.name
     project.project_type = 'External'
     project.customer = doc.customer
     project.sales_order = doc.name

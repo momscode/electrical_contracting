@@ -1,0 +1,200 @@
+{
+ "autoname": "AP-.YYYY.-.#####",
+ "creation": "2020-09-24 15:05:32.871437",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "project",
+  "child_task",
+  "start_date",
+  "allow_holidays_as_working_days",
+  "status",
+  "task",
+  "column_break_2",
+  "parent_task",
+  "activity_item",
+  "end_date",
+  "total_days",
+  "section_break_12",
+  "estimated_duration",
+  "overutilized",
+  "column_break_14",
+  "utilized",
+  "description_section",
+  "description",
+  "bom",
+  "activity_duration",
+  "activity_type",
+  "amended_from"
+ ],
+ "fields": [
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Project",
+   "options": "Project",
+   "reqd": 1
+  },
+  {
+   "fieldname": "parent_task",
+   "fieldtype": "Link",
+   "label": "Parent Task",
+   "options": "Task"
+  },
+  {
+   "fieldname": "child_task",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Child Task",
+   "options": "Task"
+  },
+  {
+   "fieldname": "activity_item",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Activity Item"
+  },
+  {
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "In-Progress\nCompleted"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Expected Start Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "end_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Expected End Date",
+   "reqd": 1
+  },
+  {
+   "fieldname": "task",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Task",
+   "options": "Task"
+  },
+  {
+   "fieldname": "bom",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "BOM",
+   "options": "BOM"
+  },
+  {
+   "fieldname": "amended_from",
+   "fieldtype": "Link",
+   "label": "Amended From",
+   "no_copy": 1,
+   "options": "Activity Planner",
+   "print_hide": 1,
+   "read_only": 1
+  },
+  {
+   "fieldname": "description_section",
+   "fieldtype": "Section Break",
+   "label": "Description"
+  },
+  {
+   "fieldname": "utilized",
+   "fieldtype": "Float",
+   "label": "Utilized",
+   "read_only": 1
+  },
+  {
+   "fieldname": "estimated_duration",
+   "fieldtype": "Float",
+   "label": "Estimated Duration",
+   "read_only": 1
+  },
+  {
+   "fieldname": "overutilized",
+   "fieldtype": "Float",
+   "label": "Overutilized",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break",
+   "label": "Activity Data"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "activity_duration",
+   "fieldtype": "Float",
+   "hidden": 1,
+   "label": "Activity Duration"
+  },
+  {
+   "default": "0",
+   "description": "If checked, Total no. of Working Days will include holidays, ",
+   "fieldname": "allow_holidays_as_working_days",
+   "fieldtype": "Check",
+   "label": "Include holidays in Total no. of Working Days"
+  },
+  {
+   "fieldname": "total_days",
+   "fieldtype": "Int",
+   "label": "Total Days",
+   "read_only": 1
+  },
+  {
+   "fieldname": "activity_type",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "Activity Type",
+   "options": "Activity Type"
+  }
+ ],
+ "is_submittable": 1,
+ "modified": "2020-10-08 09:49:56.469107",
+ "modified_by": "Administrator",
+ "module": "Electrical Contracting",
+ "name": "Activity Planner",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1,
+ "track_views": 1
+}
