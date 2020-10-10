@@ -41,3 +41,8 @@ def on_activity_after_submit(child_task,activity_item):
 def on_estimated_after_submit(child_task,activity_item,estimated_duration):
         frappe.db.sql("""update `tabActivity Data` set estimated =%s where parent=%s and activity_item=%s""",(estimated_duration,child_task,activity_item))
         return
+def activity_planner_on_cancel(doc, handler=""):
+        #completed_qty=doc.completed_qty+doc.qty
+        frappe.db.sql("""update `tabActivity Data` set status ='Pending' where parent=%s and activity_item=%s""",(doc.child_task,doc.activity_item))
+        frappe.db.sql("""update `tabActivity Data` set estimated =%s where parent=%s and activity_item=%s""",(0,doc.child_task,doc.activity_item))
+        return

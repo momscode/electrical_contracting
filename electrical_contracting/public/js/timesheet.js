@@ -148,6 +148,14 @@ validate: function(frm) {
         })
     }*/
     
+    $.each(frm.doc.time_logs || [], function(i, v) {
+        if(v.activity_type!=frm.doc.activity_type){
+            frappe.msgprint(__(`Activity Type Should be  `+frm.doc.activity_type));
+            frappe.validated = false;
+        }
+        frm.refresh_field("time_logs");
+    });
+    
 },
 activity_planner:function(frm,cdt,cdn){
     frappe.call({

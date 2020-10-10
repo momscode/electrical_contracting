@@ -36,8 +36,8 @@ doctype_js = {
     "Sales Order":"public/js/sales_order.js",
     "Material Request":"public/js/material_request.js",
     "Timesheet":"public/js/timesheet.js",
-    "Task":"public/js/task.js"
-    
+    "Task":"public/js/task.js",
+    "Stock Entry":"public/js/stock_entry.js"
     }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 doctype_list_js = {
@@ -124,6 +124,9 @@ doc_events = {
         "on_submit":"electrical_contracting.electrical_contracting.doctype.timesheet.timesheet_custom.on_timesheet_after_submit",
         "on_cancel":"electrical_contracting.electrical_contracting.doctype.timesheet.timesheet_custom.on_timesheet_on_cancel"
     },
+    "Activity Planner":{
+        "on_cancel":"electrical_contracting.electrical_contracting.doctype.activity_planner.activity_planner.activity_planner_on_cancel"
+    }
 
 
     

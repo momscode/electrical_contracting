@@ -20,11 +20,6 @@ def get_data():
 					"name": "Activity Planner",
 					"description": _("Activity Planner"),
 					"onboard": 1,
-				},{
-					"type": "doctype",
-					"name": "Project Measurement",
-					"description": _("Project Measurement"),
-					"onboard": 1,
 				},
 
             ]
