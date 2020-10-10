@@ -174,13 +174,14 @@
   }
  ],
  "is_submittable": 1,
- "modified": "2020-10-08 09:49:56.469107",
+ "modified": "2020-10-09 16:36:03.506169",
  "modified_by": "Administrator",
  "module": "Electrical Contracting",
  "name": "Activity Planner",
  "owner": "Administrator",
  "permissions": [
   {
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -190,6 +191,7 @@
    "report": 1,
    "role": "System Manager",
    "share": 1,
+   "submit": 1,
    "write": 1
   }
  ],

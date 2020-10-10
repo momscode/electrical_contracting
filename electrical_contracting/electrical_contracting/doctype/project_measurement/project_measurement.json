@@ -107,13 +107,14 @@
  "icon": "fa fa-puzzle-piece",
  "is_submittable": 1,
  "max_attachments": 4,
- "modified": "2020-10-03 11:30:15.723949",
+ "modified": "2020-10-09 16:41:30.473955",
  "modified_by": "Administrator",
  "module": "Electrical Contracting",
  "name": "Project Measurement",
  "owner": "Administrator",
  "permissions": [
   {
+   "cancel": 1,
    "create": 1,
    "delete": 1,
    "email": 1,
@@ -122,6 +123,7 @@
    "report": 1,
    "role": "Projects User",
    "share": 1,
+   "submit": 1,
    "write": 1
   },
   {

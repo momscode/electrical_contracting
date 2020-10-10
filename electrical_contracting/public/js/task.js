@@ -6,39 +6,49 @@ frappe.ui.form.on("Task", {
         frm.set_df_property('parent_qty',  'hidden',  frm.doc.__islocal ? 0 : 1);
         }
 }, 
-validate:function(frm,cdt,cdn){
-    var d=locals[cdt][cdn]
-    if(d.is_group==1)
-    {
-        frappe.call({
-            method: "electrical_contracting.electrical_contracting.doctype.task.task_custom.get_all_child_data_values",
-            args:{
-                'project': d.project,
-                'task':d.name
-
-            },
-            callback:function(r){
-                //alert(r.message.validated_qty)
-                cur_frm.set_value("completed_qty",r.message.completed_qty);
-                cur_frm.set_value("measured_qty",r.message.validated_qty);
+    status: function (frm, cdt, cdn) {
+        var d = locals[cdt][cdn]
+        if (d.is_group == 1) {
+            frappe.call({
+                method: "electrical_contracting.electrical_contracting.doctype.task.task_custom.get_activity_data",
+                args: {
+                    'parent_task': d.name
+                },
+                callback: function (r) {
+                    if (!r.exc) {
+                        frm.clear_table("activity_data");
+                        frm.refresh_field("activity_data");
+                        for (var i = 0; i < r.message.length; i++) {
+                            var d = frm.add_child("activity_data");
+                            var item = r.message[i];
+                            frappe.model.set_value(d.doctype, d.name, "activity_item", item.activity_item);
+                            frappe.model.set_value(d.doctype, d.name, "estimated", item.estimated);
+                            frappe.model.set_value(d.doctype, d.name, "utilized", item.utilized);
+                            frappe.model.set_value(d.doctype, d.name, "additional_consumed", item.overutilized);
+                            frappe.model.set_value(d.doctype, d.name, "status", item.status);
+                            frm.refresh_field("activity_data");
+                        }
+                    }
+                }
+            });
+            var d=locals[cdt][cdn]
+            if(d.is_group==1)
+            {
                 frappe.call({
-                    method: "electrical_contracting.electrical_contracting.doctype.task.task_custom.get_all_activity_data",
+                    method: "electrical_contracting.electrical_contracting.doctype.task.task_custom.get_all_child_data_values",
                     args:{
                         'project': d.project,
                         'task':d.name
-        
                     },
-                    callback:function(rs){
-                        alert(rs.message.estimated)
-                        //cur_frm.set_value("completed_qty",r.message.completed_qty);
-                        //cur_frm.set_value("measured_qty",r.message.validated_qty);
-                        
+                    callback:function(r){
+                        cur_frm.set_value("completed_qty",r.message.completed_qty);
+                        cur_frm.set_value("measured_qty",r.message.validated_qty);
                     }
                 });
             }
-        });
-    }
-},
+        }
+    },
+
  parent_task:function(frm,cdt,cdn){
         var d=locals[cdt][cdn]
         if(frm.doc.parent_task != null){
@@ -85,6 +95,9 @@ validate:function(frm,cdt,cdn){
                                             //d.qty = item.qty;
                                            // d.estimated = item.qty*d.actual_qty;
                                             d.status='Pending'
+                                            d.parent_task=frm.doc.parent_task
+                                            //frappe.model.set_value(d.doctype, d.name, "parent_task", d.parent_task);
+                
                                             /*frappe.model.set_value(d.doctype, d.name, "activity_type", item.activity_type);
                                             frappe.model.set_value(d.doctype, d.name, "description", item.description);
                                             frappe.model.set_value(d.doctype, d.name, "hour_rate", item.hour_rate);
@@ -120,6 +133,7 @@ validate:function(frm,cdt,cdn){
             frappe.msgprint(__(`Completed Qty Exceeds  Planned Qty`));
             frappe.validated = false;
         }
+        
 },
 validate: function(frm) {
     if(frm.doc.parent_task){
@@ -181,7 +195,7 @@ if(frm.doc.parent_task != null)
                                               if(sum_child_task_actual_qty>parent_task_actual_qty)
                                                {
                                                   cur_frm.set_value("actual_qty",0);
-                                                  frappe.msgprint(__(`Total quantity Of child task ${sum_child_task_actual_qty} exceeds the quantity of parent task ${parent_task_actual_qty}`));
+                                                  frappe.msgprint(__(`Total Qty Of Child Task ${sum_child_task_actual_qty} Exceeds  Qty of Parent Task ${parent_task_actual_qty}`));
                                                   frappe.validated = false;
                                                }
                                            }

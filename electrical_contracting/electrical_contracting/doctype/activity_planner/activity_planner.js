@@ -7,7 +7,7 @@ frappe.ui.form.on('Activity Planner', {
           if(d.project && d.parent_task &&d.child_task!=null){
         
                     frappe.call({
-                        method: 'frappe.client.get',
+                        method: 'frappe.client.get_value',
                          args:{
                             'doctype':'Activity Planner',
                             'filters':{
@@ -227,7 +227,7 @@ frappe.ui.form.on('Activity Planner', {
                         if (!r.exc) {
                             
                             if(r.message.activity_item==d.activity_item){ 
-                                frappe.msgprint(__("Activity is Already Planned."));
+                                frappe.msgprint(__(r.message.activity_item+" is Already Planned."));
                               return
                             }
                            

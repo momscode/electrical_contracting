@@ -1,7 +1,13 @@
 frappe.ui.form.on('Material Request', {
+  
+    
+
+    
     validate:function(frm,cdt,cdn)
     {
+        
         var d =locals[cdt][cdn];
+       // alert(d.activity_planner)
         $.each(frm.doc.items || [], function(i, s) {
              var amount = flt(s.rate);
              var bom_rate=s.rate_with_discount;
@@ -15,8 +21,37 @@ frappe.ui.form.on('Material Request', {
                 return false; 
                 frappe.validated = false;
             }
-            frappe.validated = false;
+            if(d.project && d.parent_task &&d.child_task!=null){
+        
+                frappe.call({
+                    method: 'frappe.client.get_value',
+                     args:{
+                        'doctype':'Material Request',
+                        'filters':{
+                            'project':d.project, 
+                            'parent_task':d.parent_task,
+                            'child_task':d.child_task,
+                            //'activity_type':d.activity_type,//data.message.subject,
+                            'activity_planner':d.activity_planner,
+                            'docstatus': 1,
+                            //'is_default': 1
+                        },
+                        'fieldname':['name','activity_planner']
+                    },
+                callback:function(r){
+                    if(!r.exc)
+                    {
+                        if(r.message.activity_planner==d.activity_planner){ 
+                           frappe.msgprint(__('Material Issue for '+d.activity_planner +`  is Already Created `));
+                            frappe.validated = false;
+                        }
+                           
+                    }
+            }
+                })  
+            }
         });
+
     },
     refresh:function(frm,cdt,cdn){
         var d =locals[cdt][cdn];

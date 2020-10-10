@@ -10,7 +10,8 @@
   "additional_consumed",
   "status",
   "expected_start_date",
-  "expected_end_date"
+  "expected_end_date",
+  "parent_task"
  ],
  "fields": [
   {
@@ -45,11 +46,13 @@
   {
    "fieldname": "expected_start_date",
    "fieldtype": "Date",
+   "hidden": 1,
    "label": "Expected Start Date "
   },
   {
    "fieldname": "expected_end_date",
    "fieldtype": "Date",
+   "hidden": 1,
    "label": "Expected End Date "
   },
   {
@@ -59,10 +62,17 @@
    "in_list_view": 1,
    "label": "Status",
    "options": "Pending\nPlanned"
+  },
+  {
+   "fieldname": "parent_task",
+   "fieldtype": "Link",
+   "label": "Parent Task",
+   "options": "Task",
+   "read_only": 1
   }
  ],
  "istable": 1,
- "modified": "2020-10-01 12:18:06.101968",
+ "modified": "2020-10-10 09:57:01.203934",
  "modified_by": "Administrator",
  "module": "Electrical Contracting",
  "name": "Activity Data",
