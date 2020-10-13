@@ -18,11 +18,12 @@ def on_timesheet_after_submit(doc, handler=""):
                         frappe.db.sql("""update `tabActivity Data` set additional_consumed =%s where parent=%s and activity_item=%s""",(over_utilized,doc.child_task,doc.activity_type))
         return                
 def on_timesheet_on_cancel(doc, handler=""):
-        frappe.msgprint("hai")
-        frappe.db.sql("""update `tabActivity Planner` set utilized = %s where name =%s""",((doc.utilized), doc.activity_planner))
-        frappe.db.sql("""update `tabActivity Data` set utilized =%s where parent=%s and activity_item=%s""",(doc.utilized,doc.child_task,doc.activity_type))
-        if(doc.utilized>doc.estimated_duration):
-                over_utilized=doc.utilized-doc.estimated_duration
+        task_list = frappe.db.sql("""select sum(utilized) as utilized from `tabActivity Data` where parent=%s and activity_item=%s """,(doc.child_task,doc.activity_type),as_dict=True)[0]
+        utilized=task_list.utilized-doc.total_minutes
+        frappe.db.sql("""update `tabActivity Planner` set utilized = %s where name =%s""",((utilized), doc.activity_planner))
+        frappe.db.sql("""update `tabActivity Data` set utilized =%s where parent=%s and activity_item=%s""",(utilized,doc.child_task,doc.activity_type))
+        if(utilized>doc.estimated_duration):
+                over_utilized=utilized-doc.estimated_duration
                 frappe.db.sql("""update `tabActivity Planner` set overutilized = %s where name =%s""",((over_utilized), doc.activity_planner))
                 frappe.db.sql("""update `tabActivity Data` set additional_consumed =%s where parent=%s and activity_item=%s""",(over_utilized,doc.child_task,doc.activity_type))
         else:

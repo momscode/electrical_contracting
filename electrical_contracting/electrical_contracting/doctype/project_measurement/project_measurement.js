@@ -76,17 +76,17 @@ frappe.ui.form.on('Project Measurement', {
 						},
 						callback:function(r){
 							
-							frappe.msgprint(__(`Completed Qty in `+frm.doc.child_task +' is Updated.'));	
+							frappe.msgprint(__(`Completed Qty in `+frm.doc.child_task +' Updated.'));	
 						}
 					})
 				}
 			}
 			else{
 				var total_qty =frm.doc.qty + frm.doc.measured_qty
-				if(total_qty>frm.doc.planned_qty)
+				if(total_qty>frm.doc.completed_qty)
 				{
 					frm.set_value("qty",0);
-					frappe.msgprint(__(`Validated Qty Exceeds Planned Qty`));
+					frappe.msgprint(__(`Validated Qty Exceeds Completed Qty`));
 					frappe.validated = false;	
 				}
 				else
@@ -100,7 +100,7 @@ frappe.ui.form.on('Project Measurement', {
 						},
 						callback:function(r){
 							
-							frappe.msgprint(__(`Validated Qty in `+frm.doc.child_task +' is Updated.'));	
+							frappe.msgprint(__(`Validated Qty in `+frm.doc.child_task +' Updated.'));	
 						}
 					})
 				}
@@ -131,10 +131,10 @@ frappe.ui.form.on('Project Measurement', {
 				}
 				else{
 					var total_qty =frm.doc.qty + frm.doc.measured_qty
-					if(total_qty>frm.doc.planned_qty)
+					if(total_qty>frm.doc.completed_qty)
 					{
 						frm.set_value("qty",0);
-						frappe.msgprint(__(`Validated Qty Exceeds Planned Qty`));
+						frappe.msgprint(__(`Validated Qty Exceeds Completed Qty`));
 						frappe.validated = false;	
 					}	
 				}

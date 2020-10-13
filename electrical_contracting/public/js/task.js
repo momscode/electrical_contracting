@@ -4,6 +4,7 @@ frappe.ui.form.on("Task", {
         if(frm.doc.is_group==1)
         {
         frm.set_df_property('parent_qty',  'hidden',  frm.doc.__islocal ? 0 : 1);
+        frm.set_df_property('actual_qty',  'read_only',  frm.doc.__islocal ? 0 : 1);
         }
 }, 
     status: function (frm, cdt, cdn) {
@@ -195,7 +196,7 @@ if(frm.doc.parent_task != null)
                                               if(sum_child_task_actual_qty>parent_task_actual_qty)
                                                {
                                                   cur_frm.set_value("actual_qty",0);
-                                                  frappe.msgprint(__(`Total Qty Of Child Task ${sum_child_task_actual_qty} Exceeds  Qty of Parent Task ${parent_task_actual_qty}`));
+                                                  frappe.msgprint(__(`Total Qty Of Child Task (${sum_child_task_actual_qty}) Exceeds  Qty of Parent Task(${parent_task_actual_qty}).`));
                                                   frappe.validated = false;
                                                }
                                            }
