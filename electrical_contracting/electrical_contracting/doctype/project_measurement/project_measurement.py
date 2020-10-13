@@ -22,9 +22,13 @@ def on_Project_measurement_Measured_after_submit(qty,child_task):
 
 def on_project_measurement_on_cancel(doc, handler=""):
         if(doc.type=='Completed'):
-                frappe.db.sql("""update `tabTask` set completed_qty = %s where name =%s""",(doc.completed_qty,doc.child_task))
+                task_list = frappe.db.sql("""select sum(completed_qty) as completed_qty from `tabTask` where name=%s """,(doc.child_task),as_dict=True)[0]
+                completed_qty=task_list.completed_qty-doc.qty
+                frappe.db.sql("""update `tabTask` set completed_qty = %s where name =%s""",(completed_qty,doc.child_task))
         else:
-            frappe.db.sql("""update `tabTask` set measured_qty = %s where name =%s""",((doc.measured_qty), doc.child_task))    
+                task_list = frappe.db.sql("""select sum(measured_qty) as measured_qty from `tabTask` where name=%s """,(doc.child_task),as_dict=True)[0]
+                measured_qty=task_list.measured_qty-doc.qty
+                frappe.db.sql("""update `tabTask` set measured_qty = %s where name =%s""",((measured_qty), doc.child_task))    
         return
 
 def on_project_measurement_submit(doc, handler=""):
