@@ -122,6 +122,19 @@ stock_material_cost:function(frm,cdt,cdn)
     }   
 });
 frappe.ui.form.on("Sales Order", {
+    onload:function(frm,cdt,cdn){
+		var d =locals[cdt][cdn]
+            frm.set_query("customer", function() {
+                return {
+                    filters: [
+						["Customer","docstatus", "=", 1]  
+						//["is_group","=",1]
+                    ]
+                }
+            });
+            frm.refresh_field("customer");
+		
+    }, 
     onload:function(frm)
     {
         $("Button[data-fieldname=apply_defaults]").addClass("btn-primary");
