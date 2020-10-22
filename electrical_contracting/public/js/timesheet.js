@@ -12,11 +12,6 @@ frappe.ui.form.on('Timesheet', {
             frm.refresh_field("task");
         }
     },
-    before_submit:function(frm)
-    {
-        debugger;
-alert("hai")
-    },
     before_submit:function(frm) {
         var total_minutes = 0;
         $.each(frm.doc.time_logs || [], function(i, v) {

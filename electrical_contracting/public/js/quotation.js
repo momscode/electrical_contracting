@@ -1,4 +1,5 @@
-frappe.ui.form.on('Quotation Item', {
+frappe.ui.form.on('Quotation Item', { 
+    
     item_code: function(frm,cdt,cdn){
         var d = locals[cdt][cdn];
         var item_code = d.item_code;
@@ -122,6 +123,19 @@ stock_material_cost:function(frm,cdt,cdn)
     }   
 });
 frappe.ui.form.on("Quotation", {
+    refresh:function(frm,cdt,cdn){
+		var d =locals[cdt][cdn]
+            frm.set_query("party_name", function() {
+                return {
+                    filters: [
+						["Customer","docstatus", "=", 1]
+						//["is_group","=",1]
+                    ]
+                }
+            });
+            frm.refresh_field("party_name");
+		
+    }, 
     onload:function(frm)
     {
         $("Button[data-fieldname=apply_defaults]").addClass("btn-primary");
