@@ -50,8 +50,33 @@ def get_bom_items(g_bom,activity_type):
     return bom_activity_list
 
 def on_BOM_after_submit(doc, handler=""):
-    bom_item_list = frappe.db.sql("""select item_code from `tabItem Price` where item_code= %s """,(doc.item),as_dict=1)
-    if not bom_item_list:
+    if(doc.service_only_bom==1):
+        bom_item_list = frappe.db.sql("""select item_code from `tabItem Price` where item_code= %s """,(doc.item),as_dict=1)
+        if not bom_item_list:
+            project = frappe.new_doc('Item Price')
+            project.Item_code = doc.item
+            project.uom = doc.uom
+            project.price_list = 'Standard Selling'
+            project.quantity=doc.quantity
+            project.price_list_rate = doc.activity_material_cost/doc.quantity
+            project.flags.ignore_permissions  = True
+            project.update({
+                'item_code': project.Item_code,
+                'uom': project.uom,
+                'price_list': project.price_list,
+                'price_list_rate': project.price_list_rate
+            }).insert()
+            frappe.msgprint(msg = 'Item Price Created',
+            title = 'Notification',
+            indicator = 'green')
+        else:
+            frappe.db.sql("""update `tabItem Price` set price_list_rate = %s where item_code =%s""",((doc.activity_material_cost/doc.quantity), doc.item))
+            frappe.msgprint(msg = 'Item Price Updated',
+            title = 'Notification',
+            indicator = 'green')
+    else:
+        bom_item_list = frappe.db.sql("""select item_code from `tabItem Price` where item_code= %s """,(doc.item),as_dict=1)
+        if not bom_item_list:
             project = frappe.new_doc('Item Price')
             project.Item_code = doc.item
             project.uom = doc.uom
@@ -68,7 +93,7 @@ def on_BOM_after_submit(doc, handler=""):
             frappe.msgprint(msg = 'Item Price Created',
             title = 'Notification',
             indicator = 'green')
-    else:
+        else:
         
             frappe.db.sql("""update `tabItem Price` set price_list_rate = %s where item_code =%s""",((doc.total_bom_cost/doc.quantity), doc.item))
             frappe.msgprint(msg = 'Item Price Updated',
