@@ -60,9 +60,10 @@ frappe.ui.form.on("Task", {
                   name: frm.doc.parent_task
                 },
             callback: function (data) {
+                debugger;
                 cur_frm.set_value("parent_qty",data.message.actual_qty);
                 if(frm.doc.project && frm.doc.parent_task!=null){
-                    var a=frm.doc.project+'_'+data.message.subject
+                    var a=data.message.subject
                     frappe.call({
                         method: 'frappe.client.get_value',
                          args:{
@@ -92,7 +93,7 @@ frappe.ui.form.on("Task", {
                                             //d.activity_type = item.activity_type;
                                             frappe.model.set_value(d.doctype, d.name, "activity_item", item.activity_type);
                                             //d.uom = item.uom;
-                                            //d.estimated = item.rate*parent_qty;
+                                            d.estimated = item.rate*parent_qty;
                                             //d.qty = item.qty;
                                            // d.estimated = item.qty*d.actual_qty;
                                             d.status='Pending'

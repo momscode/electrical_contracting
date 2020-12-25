@@ -1,5 +1,28 @@
 frappe.ui.form.on('Quotation Item', { 
-    
+  
+    refresh:function(frm,cdt,cdn){
+        
+		var d =locals[cdt][cdn]
+            frm.set_query("party_name", function() {
+                return {
+                    filters: [
+						["Customer","docstatus", "=", 1]
+						//["is_group","=",1]
+                    ]
+                }
+            });
+            frm.fields_dict['items'].grid.get_field('item_code').get_query = function(doc, cdt, cdn) {
+                var child = locals[cdt][cdn];
+                return {    
+                    filters:[
+                        ['item_name' ,'like' ,'opp_%']
+                        //['item_group', 'in', ['Generic Component Item']]
+                    ]
+                }
+            }
+            frm.refresh_field("items");
+            
+    }, 
     item_code: function(frm,cdt,cdn){
         var d = locals[cdt][cdn];
         var item_code = d.item_code;
@@ -123,8 +146,11 @@ stock_material_cost:function(frm,cdt,cdn)
     }   
 });
 frappe.ui.form.on("Quotation", {
+    
     refresh:function(frm,cdt,cdn){
-		var d =locals[cdt][cdn]
+        
+        var d =locals[cdt][cdn]
+        var opp=d.opportunity
             frm.set_query("party_name", function() {
                 return {
                     filters: [
@@ -133,8 +159,27 @@ frappe.ui.form.on("Quotation", {
                     ]
                 }
             });
-            frm.refresh_field("party_name");
-		
+            frm.fields_dict['items'].grid.get_field('item_code').get_query = function(doc, cdt, cdn) {
+                var child = locals[cdt][cdn];
+                return {    
+                    filters:[
+                        ['item_code' ,'like' ,opp+'%']
+                        //['item_group', 'in', ['Generic Component Item']]
+                    ]
+                }
+            }
+            frm.refresh_field("optional_item");
+            
+            frm.fields_dict['optional_item'].grid.get_field('item_code').get_query = function(doc, cdt, cdn) {
+                var child = locals[cdt][cdn];
+                return {    
+                    filters:[
+                        ['item_code' ,'like' ,'opp_%']
+                        //['item_group', 'in', ['Generic Component Item']]
+                    ]
+                }
+            }
+            frm.refresh_field("optional_item");
     }, 
     onload:function(frm)
     {
@@ -343,4 +388,36 @@ default_material_overhead: function(frm) {
         })
 })
 },
+});
+frappe.ui.form.on('Optional Item', { 
+    item_code:function(frm,cdt,cdn){
+        $.each(frm.doc.items || [], function(i, v) {
+            var d = locals[cdt][cdn];
+            if(v.item_code==d.item_code)
+            {
+                frappe.msgprint(__( `Duplicate Item `+v.item_code));
+
+               
+            }
+    })
+    frappe.call({
+        method: 'frappe.client.get',
+        args:{
+            'doctype':'Item Price',
+            'filters':{
+                'item_code': d.item_code
+            },
+            'fieldname':[
+                'price_list_rate'
+            ]
+        },
+        callback:function(s){
+            if (!s.exc) {
+                alert(s.price_list_rate)
+                
+            }
+        }
+    })
+
+}
 });
