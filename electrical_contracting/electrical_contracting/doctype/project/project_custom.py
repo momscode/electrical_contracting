@@ -8,7 +8,7 @@ def on_project_on_submit(doc, handler=""):
     where s.name = si.parent and si.parenttype = 'Sales Order'
     and s.docstatus = 1 and si.parent = %s""",(doc.sales_order),as_dict=1)
 
-    for d in item_list:
+    """ for d in item_list:
         item = frappe.new_doc('Item')
         data = frappe.get_all("Item", fields = ["*"],filters = {'item_code' : d.item_code,'disabled':0})
         item_name = data[0]['name']
@@ -31,43 +31,43 @@ def on_project_on_submit(doc, handler=""):
         item.deferred_expense_account = data[0]['deferred_expense_account']
         item.deferred_revenue_account = data[0]['deferred_revenue_account']
 
-        item_default_list = frappe.db.sql("""select id.company,id.default_warehouse,id.default_price_list
-            ,id.selling_cost_center,id.income_account
-            from `tabItem Default` id, `tabItem` i
-            where i.name = id.parent and id.parenttype = 'Item'
-            and id.parent = %s""",(item_name),as_dict=1)
+        item_default_list = frappe.db.sql("""#select id.company,id.default_warehouse,id.default_price_list
+            #""",id.selling_cost_center,id.income_account
+           # from `tabItem Default` id, `tabItem` i
+            #where i.name = id.parent and id.parenttype = 'Item'
+            #and id.parent = %s"""#,(item_name),as_dict=1)"""
         
-        for i in item_default_list:
-            item.append('item_defaults', {
-                'company': i.company,
-                'default_warehouse': i.default_warehouse,
-                'default_price_list': i.default_price_list,
-                'selling_cost_center': i.selling_cost_center,
-                'income_account': i.income_account
-            })
+       # for i in item_default_list:
+           # item.append('item_defaults', {
+               # 'company': i.company,
+               # 'default_warehouse': i.default_warehouse,
+                #'default_price_list': i.default_price_list,
+                #'selling_cost_center': i.selling_cost_center,
+                #'income_account': i.income_account
+            #})
 
-        item.flags.ignore_permissions  = True
+        #item.flags.ignore_permissions  = True
 
-        item.update({
-            'item_name': item.item_name,
-            'default_material_request_type': item.default_material_request_type,
-            'item_group': item.item_group,
-            'valuation_method': item.valuation_method,
-            'allow_alternative_item': item.allow_alternative_item,
-            'enable_deferred_revenue': item.enable_deferred_revenue,
-            'enable_deferred_expense': item.enable_deferred_expense,
-            'is_sales_item': item.is_sales_item,
-            'is_purchase_item': item.is_purchase_item,
-            'is_stock_item': item.is_stock_item,
-            'brand': item.brand,
-            'item_code': item.item_code,
-            'include_item_in_manufacturing': item.include_item_in_manufacturing,
-            'stock_uom': item.stock_uom,
-            'description': item.description,
-            'deferred_expense_account': item.deferred_expense_account,
-            'deferred_revenue_account': item.deferred_revenue_account,
-            'item_defaults': item.item_defaults
-        }).insert()
+        #"""item.update({
+            #'item_name': item.item_name,
+           # 'default_material_request_type': item.default_material_request_type,
+            #'item_group': item.item_group,
+            #'valuation_method': item.valuation_method,
+            #'allow_alternative_item': item.allow_alternative_item,
+           # 'enable_deferred_revenue': item.enable_deferred_revenue,
+           # 'enable_deferred_expense': item.enable_deferred_expense,
+            #'is_sales_item': item.is_sales_item,
+            #'is_purchase_item': item.is_purchase_item,
+           # 'is_stock_item': item.is_stock_item,
+            #'brand': item.brand,
+            #'item_code': item.item_code,
+            #'include_item_in_manufacturing': item.include_item_in_manufacturing,
+            #'stock_uom': item.stock_uom,
+            #'description': item.description,
+            #'deferred_expense_account': item.deferred_expense_account,
+            #'deferred_revenue_account': item.deferred_revenue_account,
+            #'item_defaults': item.item_defaults
+        #}).insert()"""
 
     for t in item_list:
         task = frappe.new_doc('Task')
@@ -92,10 +92,10 @@ def on_project_on_submit(doc, handler=""):
        indicator = 'green'
     )
 
-    frappe.msgprint(msg = 'Specific items has been created',
-       title = 'Notification',
-       indicator = 'green'
-    )
+    #frappe.msgprint(msg = 'Specific items has been created',
+      # title = 'Notification',
+       #indicator = 'green'
+   # )
 
     return 
 
