@@ -139,16 +139,16 @@ class ProjectDiscount(Document):
 			return bom
 
 def on_bom_on_save(doc, handler=""):
-	if doc.project:
-		name = frappe.db.get_value('Project Discount', {'project': doc.project,'is_active': 1}, 'name')
+	if doc.opportunity:
+		name = frappe.db.get_value('Project Discount', {'opportunity': doc.opportunity,'is_active': 1}, 'name')
 		if name:
 			for i in doc.bom_discount_detial:
 				target_doc = frappe.get_doc('Project Discount', name)
-				item_group = frappe.db.get_value('Project Discount Detail', {'project': i.project,'parent': name,'item_group': i.item_group}, 'item_group')
+				item_group = frappe.db.get_value('Project Discount Detail', {'opportunity': i.opportunity,'parent': name,'item_group': i.item_group}, 'item_group')
 				if not item_group:
 					target_doc.append('discount_detail', {
 						'item_group': i.item_group,
-						'project': i.project,
+						'opportunity': i.opportunity,
 						'discount_percentage': i.discount_percentage,
 					})
 					target_doc.save()
@@ -157,31 +157,34 @@ def on_bom_on_save(doc, handler=""):
 		else:
 			project_discount = frappe.new_doc('Project Discount')
 			project_discount.flags.ignore_permissions  = True
-			project_discount.update({'project':doc.project,'is_active': 1,'disabled':0,'discount_detail':doc.bom_discount_detial}).insert()
+			project_discount.update({'opportunity':doc.opportunity,'is_active': 1,'disabled':0,'discount_detail':doc.bom_discount_detial}).insert()
 			return 	project_discount
 
 def on_bom_on_change(doc, handler=""):
-	if doc.project:
-		name = frappe.db.get_value('Project Discount', {'project': doc.project,'is_active':1}, 'name')
+	if doc.opportunity:
+		name = frappe.db.get_value('Project Discount', {'opportunity': doc.opportunity,'is_active':1}, 'name')
 		if name:
 			for i in doc.bom_discount_detial:
 				target_doc = frappe.get_doc('Project Discount', name)
-				item_group = frappe.db.get_value('Project Discount Detail', {'project': i.project,'parent': name,'item_group': i.item_group}, 'item_group')
+				item_group = frappe.db.get_value('Project Discount Detail', {'opportunity': i.opportunity,'parent': name,'item_group': i.item_group}, 'item_group')
 				if not item_group:
 					target_doc.append('discount_detail', {
 						'item_group': i.item_group,
-						'project': i.project,
+						'opportunity': i.opportunity,
 						'discount_percentage': i.discount_percentage,
 					})
 					target_doc.save()
 					frappe.db.commit()
+				else:
+    					frappe.db.sql("""update `tabProject Discount Detail` set discount_percentage = %s where item_group =%s""",(i.discount_percentage, i.item_group))
+						#frappe.msgprint(msg = 'Item Price Updated',title ='Notification',indicator = 'green')
 			return target_doc
 		else:
 			return 	
 
 def before_insert(doc, hanler=""):
-	if doc.project:
-		name = frappe.db.get_value('Project Discount', {'project': doc.project,'is_active':1}, 'name')
+	if doc.opportunity:
+		name = frappe.db.get_value('Project Discount', {'opportunity': doc.opportunity,'is_active':1}, 'name')
 		if name:
 			target_doc = frappe.get_doc('Project Discount', name)
 			target_doc.is_active = 0
