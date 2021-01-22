@@ -50,6 +50,7 @@ def get_bom_items(g_bom,activity_type):
     return bom_activity_list
 
 def on_BOM_after_submit(doc, handler=""):
+    
     if(doc.service_only_bom==1):
         bom_item_list = frappe.db.sql("""select item_code from `tabItem Price` where item_code= %s """,(doc.item),as_dict=1)
         if not bom_item_list:
@@ -99,7 +100,24 @@ def on_BOM_after_submit(doc, handler=""):
             frappe.msgprint(msg = 'Item Price Updated',
             title = 'Notification',
             indicator = 'green')
-   
+            if doc.opportunity:
+                name = frappe.db.get_value('Project Discount', {'opportunity': doc.opportunity,'is_active':1},'name')
+                if name:
+                    for i in doc.bom_discount_detial:
+                        target_doc = frappe.get_doc('Project Discount', name)
+                        item_group = frappe.db.get_value('Project Discount Detail', {'opportunity': i.opportunity,'parent': name,'item_group': i.item_group}, 'item_group')
+                        if item_group:
+                            frappe.db.sql("""update `tabProject Discount Detail` set discount_percentage = %s where item_group =%s""",((i.discount_percentage), i.item_group))
+                        else:
+                            if not item_group:
+                                target_doc.append('discount_detail', {
+                                    'item_group': i.item_group,
+                                    'opportunity': i.opportunity,
+                                    'discount_percentage': i.discount_percentage,
+                                })
+                        target_doc.save()
+                        frappe.db.commit()
+        return target_doc
    
     return
 

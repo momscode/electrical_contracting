@@ -15,7 +15,6 @@ frappe.ui.form.on('BOM', {
             q_options.push(v.activity_type)
         });
         df.options = q_options;
-
             //get all item group whosw parent group is 'AMSECC Sellable Item'
             var item = [];
             frappe.call({
@@ -32,25 +31,15 @@ frappe.ui.form.on('BOM', {
                     
                 }
             });
-            
-            //---------------------------------------------------------------
-            frm.set_df_property("g_item", "reqd", 0);
             frm.set_query("item", function() {
                 return {
                     filters: [
-                        ["Item","item_group", "in", item]
+                        ['item_name' ,'like' ,d.opportunity+'_%']
+                       // ["Item","item_group", "in", item]
                     ]
                 }
             });
-            frm.fields_dict['items'].grid.get_field('item_code').get_query = function(doc, cdt, cdn) {
-                var child = locals[cdt][cdn];
-                return {    
-                    filters:[
-                        ['item_group', 'in', ['Generic Component Item']]
-                    ]
-                }
-            }
-            frm.refresh_field("items");
+            //---------------------------------------------------------------
         }
         else{
             var d = locals[cdt][cdn];
@@ -91,7 +80,8 @@ frappe.ui.form.on('BOM', {
             frm.refresh_field("g_item");
         }
     },
-    before_submit: function(frm){
+    validate: function(frm){
+
         if(!frm.doc.project_discount && frm.doc.docstatus == '0'){
             //set product discount name 
             frappe.call({
@@ -99,7 +89,8 @@ frappe.ui.form.on('BOM', {
                 args: {
                     'doctype': 'Project Discount',
                     'filters': {
-                        'project': frm.doc.project,
+                        //'project': frm.doc.project,
+                        'opportunity':frm.doc.opportunity,
                         'is_active': 1
                     },
                     'fieldname': [
@@ -109,12 +100,23 @@ frappe.ui.form.on('BOM', {
                 callback: function(n){
                     if(!n.exc){
                         frm.set_value("project_discount",n.message.name);
+
                     }
                 }
             })
             }
     },
     validate: function(frm,cdt,cdn) {
+       
+        frappe.confirm(
+            'Make sure you have Applied Project Discount:',
+            function(){
+                window.close();
+            },
+            function(){
+               // show_alert('Thanks for continue here!')
+            }
+        )
         var d =locals[cdt][cdn];
         var total_discount_rate = 0;
         var total_cost_with_discount = 0;
@@ -129,18 +131,15 @@ frappe.ui.form.on('BOM', {
             activity_cost += flt(s.base_activity_cost);
             frm.set_value("activity_material_cost",activity_cost);
         });
-        if(frm.doc.type == 'General'){
-            total_cost = d.activity_material_cost+d.stock_material_cost;
-            frm.set_value("total_bom_cost",total_cost);
-        }
-        else{
-            if(!frm.doc.total_bom_cost){
-                msgprint('Please apply discount');
-                frappe.validated = false;
-            }
-        }
+        
+    
+           
+               total_cost= frm.doc.stock_material_cost+ frm.doc.activity_material_cost-frm.doc.total_discount
+               frm.set_value("total_bom_cost",total_cost);
+            
+        
         //check rate difference between generic and project specific bom
-        if(frm.doc.type == 'Project'){
+       // if(frm.doc.type == 'Project'){
             if(frm.doc.specific_total_cost > frm.doc.generic_total_cost){
                 return new Promise(function(resolve, reject){
                     frappe.confirm(
@@ -154,40 +153,15 @@ frappe.ui.form.on('BOM', {
                     )
                 })
             }
-        }              
+        //}              
     },
     
-    btn_discount: function(frm){
-        var total_discount_rate = 0;
-        var total_cost_with_discount = 0;
-        var material_cost = 0;
-        var activity_cost = 0;
-        //fetch material cost,actvity cost,total cost of generic bom
-        frappe.call({
-            method: 'frappe.client.get_value',
-            args:{
-                'doctype':'BOM',
-                'filters':{
-                    'name': frm.doc.g_bom
-                },
-                'fieldname':[
-                    'total_bom_cost',
-                    'stock_material_cost',
-                    'activity_material_cost'
-                ]
-            },
-            callback:function(s){
-                if (!s.exc) {
-                    frm.set_value("generic_material_cost",s.message.stock_material_cost);
-                    frm.set_value("generic_activity_cost",s.message.activity_material_cost);
-                    frm.set_value("generic_total_cost",s.message.total_bom_cost);
-                    frm.refresh_field("generic_material_cost");
-                    frm.refresh_field("generic_activity_cost");
-                    frm.refresh_field("generic_total_cost");
-                    frm.refresh();
-                }
-            }
-        });
+    btn_discount: function(frm,cdt,cdn){
+       var d=locals[cdt][cdn]
+       var total_discount_rate=0
+       var material_cost=0
+       var activity_cost=0
+       var total_cost=0
         //calculate cost(material)
         $.each(frm.doc.items || [], function(i, s) {
             material_cost += flt(s.amount);
@@ -203,9 +177,12 @@ frappe.ui.form.on('BOM', {
             frm.set_value("specific_activity_cost",activity_cost);
                             
         });
+        
+        total_cost=frm.doc.specific_activity_cost+frm.doc.specific_material_cost
+       
         //set discount % and rate in bom item table
         $.each(frm.doc.bom_discount_detial || [], function(i, d) {
-            total_cost_with_discount = 0;
+           var total_cost_with_discount = 0;
             $.each(frm.doc.items || [], function(i, v) {
                 frappe.call({
                     method: 'frappe.client.get_value',
@@ -230,7 +207,7 @@ frappe.ui.form.on('BOM', {
                             //total_cost_with_discount += (flt(v.amount) - flt(discount_rate));
                            // frm.set_value("specific_total_cost",total_cost_with_discount);
                             //frm.set_value("total_cost_with_discount",total_cost_with_discount);
-                            frm.set_value("total_cost_with_discount",material_cost - total_discount_rate);
+                            frm.set_value("total_cost_with_discount",frm.doc.specific_material_cost- total_discount_rate);
                        }
                     }
                 })
@@ -241,26 +218,27 @@ frappe.ui.form.on('BOM', {
         frm.set_value("total_bom_cost",frm.doc.specific_total_cost);
     },
     total_cost_with_discount: function(frm){
-        frm.set_value("specific_total_cost",flt(frm.doc.total_cost_with_discount) + flt(frm.doc.specific_activity_cost));
+        
+        frm.set_value("total_bom_cost",flt(frm.doc.total_cost_with_discount) + flt(frm.doc.activity_material_cost));
     },
     type: function(frm){
-        if(frm.doc.type == 'General'){
+        if(frm.doc.type == 'Project'){
             frm.set_value("project",null);
             frm.set_value("project_name",null);
             frm.set_value("g_bom",null);
             frm.set_value("g_item",null);
             frm.set_value("item",null);
             frm.clear_table("items");
-            frm.clear_table("bom_discount_detial");
+            //frm.clear_table("bom_discount_detial");
             frm.refresh_field("project");
             frm.refresh_field("g_bom");
             frm.refresh_field("project_name");
             frm.refresh_field("g_item");
             frm.refresh_field("item");
             frm.refresh_field("items");
-            frm.refresh_field("bom_discount_detial");
+            //frm.refresh_field("bom_discount_detial");
         }
-        if(frm.doc.type == 'Project'){
+        if(frm.doc.type == 'General'){
             frm.set_value("item",null);
             frm.clear_table("items");
             frm.refresh_field("item");
@@ -354,20 +332,12 @@ frappe.ui.form.on('BOM', {
             });
         }
     },
-    project: function(frm){          
-        if(frm.doc.project){
-            cur_frm.set_query("g_item", function() {
-                return {
-                    "query": "electrical_contracting.electrical_contracting.doctype.bom.bom_custom.get_sales_order_items",
-                    "filters":{
-                        "project":frm.doc.project
-                    }
-                };
-            });
+    opportunity: function(frm){          
+        
             $.each(frm.doc.bom_discount_detial || [], function(i, d) {
-                frappe.model.set_value(d.doctype, d.name,"project",frm.doc.project)
+                frappe.model.set_value(d.doctype, d.name,"opportunity",frm.doc.opportunity)
             });
-        }
+       // }
     }
 })
 frappe.ui.form.on('BOM Item', { 
@@ -381,7 +351,7 @@ frappe.ui.form.on('BOM Item', {
         });
         df.options = q_options;
        // frm.refresh_field('df.activity_type')
-        if(frm.doc.type == 'Project'){
+        if(frm.doc.type == 'General'){
             var item_group = '';
    //-------to get item group of selected item----------
             frappe.call({
@@ -398,6 +368,7 @@ frappe.ui.form.on('BOM Item', {
                 if (!s.exc) {
                     var flag = false;
                     item_group = s.message.item_group;
+                   
                     $.each(frm.doc.bom_discount_detial || [], function(i, v) {
                         if(v.item_group == item_group)
                         {
@@ -411,7 +382,7 @@ frappe.ui.form.on('BOM Item', {
                             args: {
                                 'parent': 'Project Discount',
                                 'doctype': 'Project Discount Detail',
-                                'filters': {'parentfield': 'discount_detail','item_group': item_group,'project': frm.doc.project},
+                                'filters': {'parentfield': 'discount_detail','item_group': item_group,'opportunity': frm.doc.opportunity},
                                 'fieldname': [
                                      'item_group',
                                      'discount_percentage'
@@ -424,14 +395,14 @@ frappe.ui.form.on('BOM Item', {
                                 if(r.message){
                                         d = frm.add_child("bom_discount_detial");
                                         d.item_group = r.message.item_group;
-                                        d.project = frm.doc.project;
+                                        d.opportunity = frm.doc.opportunity;
                                         d.discount_percentage = r.message.discount_percentage;
                                         cur_frm.refresh_field("bom_discount_detial");
                                 }
                                 else{
                                         d = frm.add_child("bom_discount_detial");
                                         d.item_group = item_group;
-                                        d.project = frm.doc.project;
+                                        d.opportunity = frm.doc.opportunity;
                                         cur_frm.refresh_field("bom_discount_detial");
                                 }
                             }
